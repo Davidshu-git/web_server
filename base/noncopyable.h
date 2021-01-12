@@ -23,6 +23,6 @@ namespace web_server {
         noncopyable() = default;
         ~noncopyable() = default;
     };
-}
+} // namespace web_server
 
 #endif

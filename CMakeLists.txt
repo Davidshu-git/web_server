@@ -4,18 +4,11 @@ cmake_minimum_required(VERSION 3.16.3)
 # 项目信息
 project(web_server VERSION 1.0)
 
-# 设定默认build type
-# if(NOT CMAKE_BUILD_TYPE)
-#     set(CMAKE_BUILD_TYPE "debug")
-# endif()
-
 # 添加编译选项
 add_definitions(-std=c++11)
 
-# 输出编译信息
-# string(REPLACE ";" " " CMAKE_CXX_FLAGS "${CXX_FLAGS}")
-# string(TOUPPER ${CMAKE_BUILD_TYPE} BUILD_TYPE)
-# message(STATUS "CXX_FLAGS = " ${CMAKE_CXX_FLAGS} " " ${CMAKE_CXX_FLAGS_${BUILD_TYPE}})
+# 指定项目搜索include文件目录
+include_directories("${PROJECT_SOURCE_DIR}")
 
 # 添加子目录
 add_subdirectory(base)

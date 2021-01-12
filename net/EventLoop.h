@@ -3,15 +3,20 @@
 //
 // Use of this source code is governed by a GPL license
 // Author: David Shu(a294562476@gmail.com)
+//
+// public header file, and it must only include public header file
 
 #ifndef WEB_SERVER_NET_EVENTLOOP_H
 #define WEB_SERVER_NET_EVENTLOOP_H
 
-#include "noncopyable.h"
+#include "base/noncopyable.h"
+
+#include <pthread.h>
 
 namespace web_server {
     namespace net {
         // EventLoop的接口类，不要暴露过多细节
+        // 该类是IO类
         class EventLoop : private noncopyable {
         public:
             EventLoop();
@@ -30,8 +35,9 @@ namespace web_server {
             void abortNotInLoopThread();
 
             bool looping_;                      // 是否在事件循环中
-
+            const pid_t threadID_;              // EventLoop所属线程ID
         };
+        
 
     }
 }
