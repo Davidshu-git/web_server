@@ -1,10 +1,8 @@
-// header file for eventloop
+// Public header file, and it must only include public header file
 // Copyright (C) 2021, David Shu. All rights reserved.
 //
 // Use of this source code is governed by a GPL license
 // Author: David Shu(a294562476@gmail.com)
-//
-// public header file, and it must only include public header file
 
 #ifndef WEB_SERVER_NET_EVENTLOOP_H
 #define WEB_SERVER_NET_EVENTLOOP_H

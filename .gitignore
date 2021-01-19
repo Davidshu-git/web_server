@@ -1,6 +1,8 @@
 # CMake 
-build/
+build
 
 # vscode
-.vscode/
+.vscode
 
+# docker
+.devcontainer

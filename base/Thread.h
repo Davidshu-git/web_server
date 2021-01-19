@@ -1,4 +1,4 @@
-// header file for eventloop
+// 
 // Copyright (C) 2021, David Shu. All rights reserved.
 //
 // Use of this source code is governed by a GPL license
