@@ -1,8 +1,2 @@
 # CMake 
 build
-
-# vscode
-.vscode
-
-# docker
-.devcontainer

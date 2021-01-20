@@ -1,0 +1,14 @@
+{
+	"name": "sort_dev",
+	"build": {
+		"dockerfile": "Dockerfile",
+	},
+	"settings": {
+		"terminal.integrated.shell.linux": "/bin/bash"
+	},
+	"extensions": [
+		"eamodio.gitlens",
+		"ms-vscode.cmake-tools",
+		"yzhang.markdown-all-in-one"
+	]
+}
