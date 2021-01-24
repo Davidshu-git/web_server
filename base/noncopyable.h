@@ -25,4 +25,4 @@ namespace web_server {
     };
 } // namespace web_server
 
-#endif
+#endif // WEB_SERVER_BASE_NONCOPYABLE_H
