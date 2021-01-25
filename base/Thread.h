@@ -14,12 +14,58 @@
 #include <iostream>
 
 #include "base/Noncopyable.h"
+#include "base/Types.h"
 
 namespace web_server {
-    using std::string;
     class Thread : Noncopyable {
-        // 线程执行函数的类型
+        // type alias of thread execute function
         using ThreadFunction = std::function<void()>;
+    public:
+        /**
+         * @brief Construct a new Thread object
+         * 
+         * @param func thread execute function
+         * @param name thread name
+         */
+        explicit Thread(const ThreadFunction &func, const string &name = string());
+        ~Thread();
+        /**
+         * @brief create thread
+         * 
+         */
+        void start();
+
+        /**
+         * @brief thread create success
+         * 
+         * @return true 
+         * @return false 
+         */
+        bool started() const;
+
+        /**
+         * @brief wrap pthread_join()
+         * 
+         * @return int 
+         */
+        int join();
+
+        /**
+         * @brief get thread id
+         * 
+         * @return pid_t 
+         */
+        pid_t tid() const;
+        
+        /**
+         * @brief get thread name
+         * 
+         * @return const string& 
+         */
+        const string &name() const;
+
+
+
         
     };
 

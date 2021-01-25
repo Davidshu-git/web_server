@@ -7,4 +7,3 @@
  */
 
 #include "base/Thread.h"
-
