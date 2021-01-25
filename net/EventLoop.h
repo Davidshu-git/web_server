@@ -1,13 +1,15 @@
-// Public header file, and it must only include public header file
-// Copyright (C) 2021, David Shu. All rights reserved.
-//
-// Use of this source code is governed by a GPL license
-// Author: David Shu(a294562476@gmail.com)
+/**
+ * @brief Public header file, and it must only include public header file
+ * Copyright (c) 2021, David Shu. All rights reserved.
+ * 
+ * Use of this source code is governed by a GPL license
+ * @author David Shu (a294562476@gmail.com)
+ */
 
 #ifndef WEB_SERVER_NET_EVENTLOOP_H
 #define WEB_SERVER_NET_EVENTLOOP_H
 
-#include "base/noncopyable.h"
+#include "base/Noncopyable.h"
 
 #include <pthread.h>
 
@@ -15,7 +17,7 @@ namespace web_server {
     namespace net {
         // EventLoop的接口类，不要暴露过多细节
         // 该类是IO类
-        class EventLoop : private noncopyable {
+        class EventLoop : private Noncopyable {
         public:
             EventLoop();
             ~EventLoop();
@@ -38,6 +40,6 @@ namespace web_server {
         
 
     }
-}
+} // namespace web_server
 
-#endif
+#endif // WEB_SERVER_NET_EVENTLOOP_H
