@@ -12,4 +12,8 @@
 #include "base/Noncopyable.h"
 #include <stdint.h>
 
+namespace web_server{
+
+} // namespace web_server
+
 #endif // WEB_SERVER_ATOMIC_H
