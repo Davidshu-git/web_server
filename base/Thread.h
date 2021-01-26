@@ -15,6 +15,7 @@
 
 #include "base/Noncopyable.h"
 #include "base/Types.h"
+#include "base/Atomic.h"
 
 namespace web_server {
     class Thread : Noncopyable {
