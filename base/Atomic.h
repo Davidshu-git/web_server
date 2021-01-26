@@ -15,6 +15,19 @@ namespace web_server{
 
 namespace detail {
 
+template <typename T>
+class AtomicInteger : Noncopyable {
+public:
+    AtomicInteger() : value_(0){}
+    T get() {
+        return __atomic_load_n
+    }
+
+private:
+    volatile T value_;
+
+};
+
 } // namespace detail
 
 } // namespace web_server
