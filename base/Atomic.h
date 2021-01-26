@@ -10,9 +10,12 @@
 #define WEB_SERVER_ATOMIC_H
 
 #include "base/Noncopyable.h"
-#include <stdint.h>
 
 namespace web_server{
+
+namespace detail {
+
+} // namespace detail
 
 } // namespace web_server
 

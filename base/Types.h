@@ -12,7 +12,9 @@
 #include <string>
 
 namespace web_server {
-    using std::string;
+
+using std::string;
+
 } // namespace web_server
 
 #endif // WEB_SERVER_BASE_TYPES_H
