@@ -1,6 +1,7 @@
 # 设置当前目录源文件变量
 set(BASE_SRCS
     Thread.cc
+    CurrentThread.cc
 )
 
 # 生成base_lib库

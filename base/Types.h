@@ -9,6 +9,8 @@
 #ifndef WEB_SERVER_BASE_TYPES_H
 #define WEB_SERVER_BASE_TYPES_H
 
+#include <stdint.h>
+
 #include <string>
 
 namespace web_server {
