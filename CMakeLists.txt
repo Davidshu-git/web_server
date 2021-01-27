@@ -4,6 +4,9 @@ cmake_minimum_required(VERSION 3.16.3)
 # 项目信息
 project(web_server VERSION 1.0)
 
+# 允许cmake test
+enable_testing()
+
 # 添加编译选项
 add_definitions(-std=c++11)
 
