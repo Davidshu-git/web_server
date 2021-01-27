@@ -7,6 +7,7 @@
  */
 
 #include "base/Atomic.h"
+
 #include <assert.h>
 
 int main() {
@@ -40,5 +41,6 @@ int main() {
         assert(a1.add_get(-3) == 2);
         assert(a1.get_set(100) == 2);
         assert(a1.get() == 100);
-  }
+    }
+
 }

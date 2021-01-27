@@ -1,2 +1,6 @@
 add_executable(atomic_unittest Atomic_unittest.cc)
 add_test(NAME atomic_unittest COMMAND atomic_unittest)
+
+add_executable(atomic_effective Atomic_effective.cc)
+target_link_libraries(atomic_effective pthread)
+add_test(NAME atomic_effective COMMAND atomic_effective)
