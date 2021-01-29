@@ -8,3 +8,6 @@ add_test(NAME atomic_effective COMMAND atomic_effective)
 add_executable(current_thread_unittest CurrentThread_unittest.cc)
 target_link_libraries(current_thread_unittest base_lib)
 add_test(NAME current_thread_unittest COMMAND current_thread_unittest)
+
+add_executable(mutex_test Mutex_test.cc)
+add_test(NAME mutex_test COMMAND mutex_test)
