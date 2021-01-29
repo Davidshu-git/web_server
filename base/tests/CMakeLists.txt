@@ -4,3 +4,7 @@ add_test(NAME atomic_unittest COMMAND atomic_unittest)
 add_executable(atomic_effective Atomic_effective.cc)
 target_link_libraries(atomic_effective pthread)
 add_test(NAME atomic_effective COMMAND atomic_effective)
+
+add_executable(current_thread_unittest CurrentThread_unittest.cc)
+target_link_libraries(current_thread_unittest base_lib)
+add_test(NAME current_thread_unittest COMMAND current_thread_unittest)

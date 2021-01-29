@@ -24,6 +24,8 @@ extern __thread const char *t_thread_name;
 
 void cached_tid();
 
+bool is_main_thread();
+
 inline int tid() {
     if(unlikely(t_cached_tid == 0)) {
         cached_tid();
@@ -43,7 +45,9 @@ inline const char *thread_name() {
     return t_thread_name;
 }
 
-bool is_main_thread();
+// TODO
+// add sleep_u_sec function
+// add stack_trace function
 
 } // namespace current_thread
 
