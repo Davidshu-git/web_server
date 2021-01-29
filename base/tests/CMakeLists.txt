@@ -11,3 +11,7 @@ add_test(NAME current_thread_unittest COMMAND current_thread_unittest)
 
 add_executable(mutex_test Mutex_test.cc)
 add_test(NAME mutex_test COMMAND mutex_test)
+
+add_executable(thread_test Thread_test.cc)
+target_link_libraries(thread_test base_lib)
+add_test(NAME thread_test COMMAND thread_test)

@@ -10,68 +10,53 @@
 #define WER_SERVER_BASE_THREAD_H
 
 #include <functional>
-#include <string>
-#include <iostream>
+#include <pthread.h>
 
 #include "base/Noncopyable.h"
 #include "base/Types.h"
 #include "base/Atomic.h"
+#include "base/CountDownLatch.h"
 
 namespace web_server {
-    /**
-     * @brief 线程类
-     * 
-     */
+
 class Thread : Noncopyable {
-    // type alias of thread execute function
-    using ThreadFunction = std::function<void()>;
 public:
-    /**
-     * @brief Construct a new Thread object
-     * 
-     * @param func thread execute function
-     * @param name thread name
-     */
-    explicit Thread(const ThreadFunction &func, const string &name = string());
+    using ThreadFunction = std::function<void()>;
+    Thread(const ThreadFunction &func, const string &name = string());
     ~Thread();
-    /**
-     * @brief create thread
-     * 
-     */
+
+    bool started() const {
+        return started_;
+    }
+
+    pid_t tid() const {
+        return tid_;
+    }
+
+    const string &name() const {
+        return name_;
+    }
+
+    static int num_created() {
+        return num_created_.get();
+    }
+
     void start();
 
-    /**
-     * @brief thread create success
-     * 
-     * @return true 
-     * @return false 
-     */
-    bool started() const;
-
-    /**
-     * @brief wrap pthread_join()
-     * 
-     * @return int 
-     */
     int join();
-
-    /**
-     * @brief get thread id
-     * 
-     * @return pid_t 
-     */
-    pid_t tid() const;
     
-    /**
-     * @brief get thread name
-     * 
-     * @return const string& 
-     */
-    const string &name() const;
-
-
-
+private:
+    bool started_;
+    bool joined_;
+    pthread_t pthread_ID_;
+    pid_t tid_;
+    ThreadFunction func_;
+    string name_;
+    CountDownLatch latch_;
     
+    static AtomicInt32 num_created_;
+    
+    void set_default_name();
 };
 
 } // namespace web_server

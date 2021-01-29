@@ -2,6 +2,7 @@
 set(BASE_SRCS
     Thread.cc
     CurrentThread.cc
+    CountDownLatch.cc
 )
 
 # 生成base_lib库
