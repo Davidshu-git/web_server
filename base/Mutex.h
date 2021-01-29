@@ -39,6 +39,11 @@ public:
         assert(is_locked_by_this_thread());
     }
 
+    /**
+     * @brief Get the pthread mutex object, this must not be const
+     * 
+     * @return pthread_mutex_t* 
+     */
     pthread_mutex_t *get_pthread_mutex() {
         return &mutex_;
     }
