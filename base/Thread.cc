@@ -6,12 +6,14 @@
  * @author David Shu (a294562476@gmail.com)
  */
 
+#include "base/Thread.h"
+
 #include <stdio.h>
 #include <assert.h>
 #include <pthread.h>
 #include <sys/prctl.h>
 
-#include "base/Thread.h"
+
 #include "base/Types.h"
 #include "base/CurrentThread.h"
 

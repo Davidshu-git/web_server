@@ -19,7 +19,7 @@
 
 namespace web_server {
 
-class Thread : Noncopyable {
+class Thread : private Noncopyable {
 public:
     using ThreadFunction = std::function<void()>;
     Thread(const ThreadFunction &func, const string &name = string());

@@ -39,7 +39,7 @@ void cached_tid() {
     if(t_cached_tid == 0) {
         t_cached_tid = detail::gettid();
         t_tid_string_length = snprintf(t_tid_string, sizeof(t_tid_string),
-        "%5d ", t_cached_tid);
+            "%5d ", t_cached_tid);
     }
 }
 

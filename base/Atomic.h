@@ -17,7 +17,7 @@ namespace web_server{
 namespace detail {
 
 template <typename T>
-class AtomicInteger : Noncopyable {
+class AtomicInteger : private Noncopyable {
 public:
     AtomicInteger() : value_(0){}
     T get() {
