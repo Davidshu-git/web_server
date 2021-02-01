@@ -30,7 +30,4 @@ int main() {
     assert(EventLoop::get_event_loop_of_current_thread() == &loop);
 
     Thread thread(thread_func);
-    thread.start();
-
-    loop.loop();
 }
