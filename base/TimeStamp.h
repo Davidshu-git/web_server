@@ -10,13 +10,14 @@
 #define WEB_SERVER_BASE_TIMESTAMP_H
 
 #include <ctime>
+#include <boost/operators.hpp>
 
 #include "base/Types.h"
 #include "base/Copyable.h"
 
 namespace web_server {
 
-class Timestamp : public Copyable {
+class Timestamp : public Copyable, public boost::equality_comparable<Timestamp>, public boost::less_than_comparable<Timestamp> {
 public:
     Timestamp() : micro_seconds_since_epoch_(0) {}
     explicit Timestamp(int64_t micro_seconds_since_epoch)
