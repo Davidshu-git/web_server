@@ -6,8 +6,8 @@
  * @author David Shu (a294562476@gmail.com)
  */
 
-#include <stdio.h>
-#include <stdlib.h>
+#include <cstdio>
+#include <cstdlib>
 #include <pthread.h>
 
 int g_iFlagAtom = 0; // 是否使用原子操作

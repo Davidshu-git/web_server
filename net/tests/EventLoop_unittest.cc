@@ -9,7 +9,7 @@
 #include "net/EventLoop.h"
 
 #include <unistd.h>
-#include <assert.h>
+#include <cassert>
 
 #include "base/Thread.h"
 

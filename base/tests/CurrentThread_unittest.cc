@@ -8,9 +8,9 @@
 
 #include "base/CurrentThread.h"
 
-#include <assert.h>
+#include <cassert>
 
-#include <stdio.h>
+#include <cstdio>
 #include <unistd.h>
 
 int main() {

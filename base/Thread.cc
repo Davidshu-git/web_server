@@ -8,8 +8,8 @@
 
 #include "base/Thread.h"
 
-#include <stdio.h>
-#include <assert.h>
+#include <cstdio>
+#include <cassert>
 #include <pthread.h>
 #include <sys/prctl.h>
 

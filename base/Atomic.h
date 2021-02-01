@@ -9,7 +9,7 @@
 #ifndef WEB_SERVER_ATOMIC_H
 #define WEB_SERVER_ATOMIC_H
 
-#include <stdint.h>
+#include <cstdint>
 #include "base/Noncopyable.h"
 
 namespace web_server{

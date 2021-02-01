@@ -9,9 +9,9 @@
 #include "net/EventLoop.h"
 
 #include <sys/eventfd.h>
-#include <stdlib.h>
+#include <cstdlib>
 #include <unistd.h>
-#include <assert.h>
+#include <cassert>
 
 #include <vector>
 

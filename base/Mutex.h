@@ -10,7 +10,7 @@
 #define WEB_SERVER_BASE_MUTEX_H
 
 #include <pthread.h>
-#include <assert.h>
+#include <cassert>
 
 #include "base/Noncopyable.h"
 #include "base/CurrentThread.h"

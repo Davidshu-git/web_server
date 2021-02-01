@@ -10,7 +10,7 @@
 
 #include <sys/syscall.h>
 #include <unistd.h>
-#include <stdio.h>
+#include <cstdio>
 
 namespace web_server {
 

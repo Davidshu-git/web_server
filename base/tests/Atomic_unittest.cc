@@ -8,7 +8,7 @@
 
 #include "base/Atomic.h"
 
-#include <assert.h>
+#include <cassert>
 
 int main() {
     {
