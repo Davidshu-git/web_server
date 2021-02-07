@@ -17,4 +17,5 @@ target_link_libraries(thread_test base_lib)
 add_test(NAME thread_test COMMAND thread_test)
 
 add_executable(timestamp_unittest Timestamp_unittest.cc)
+target_link_libraries(timestamp_unittest base_lib)
 add_test(NAME timestamp_unittest COMMAND timestamp_unittest)

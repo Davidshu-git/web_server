@@ -7,8 +7,13 @@
  */
 
 #include <iostream>
+#include <string>
 
 int main() {
     
     std::cout << "no error" << std::endl;
+    int a = 54;
+    int b = 45;
+    std::string test = std::to_string(a) + "." + std::to_string(b);
+    std::cout << test << std::endl;
 }

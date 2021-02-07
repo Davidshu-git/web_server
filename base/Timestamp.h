@@ -57,6 +57,24 @@ private:
     int64_t micro_seconds_since_epoch_;
 };
 
+inline bool operator<(Timestamp lhs, Timestamp rhs) {
+    return lhs.micro_seconds_since_epoch() < rhs.micro_seconds_since_epoch();
+}
+
+inline bool operator==(Timestamp lhs, Timestamp rhs) {
+    return lhs.micro_seconds_since_epoch() == rhs.micro_seconds_since_epoch();
+}
+
+inline double time_difference(Timestamp high, Timestamp low) {
+    int64_t difference = high.micro_seconds_since_epoch() - low.micro_seconds_since_epoch();
+    return static_cast<double>(difference) / Timestamp::k_micro_seconds_per_second;
+}
+
+inline Timestamp add_time(Timestamp timestamp, double seconds) {
+    int64_t delta = static_cast<int64_t>(seconds * Timestamp::k_micro_seconds_per_second);
+    return Timestamp(timestamp.micro_seconds_since_epoch() + delta);
+}
+
 } // namespace web_server
 
 #endif // WEB_SERVER_BASE_TIMESTAMP_H
