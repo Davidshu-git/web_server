@@ -12,6 +12,7 @@
 #include <functional>
 #include <atomic>
 #include <vector>
+#include <memory>
 
 #include "base/Noncopyable.h"
 #include "base/Mutex.h"
@@ -20,6 +21,9 @@
 namespace web_server {
 
 namespace net {
+
+class Channel;
+class Poller;
 
 class EventLoop : private Noncopyable {
 public:
@@ -42,8 +46,8 @@ public:
         }
     }
 
-    bool event_handleing() const {
-        return event_handleing_;
+    bool event_handling() const {
+        return event_handling_;
     }
 
     size_t queue_size() const {
@@ -60,12 +64,15 @@ public:
     // TODO
     // add timer function
     void wakeup();
+    void update_channel(Channel *channel);
+    void remove_channel(Channel *channel);
+    bool has_channel(Channel *channel);
     // TODO
-    // add channel function
     // add context function
     static EventLoop *get_event_loop_of_current_thread();
 
 private:
+    using ChannelLists = std::vector<Channel *>;
     void abort_not_in_loop_thread();
     void handle_read();
     void do_pending_functors();
@@ -74,17 +81,19 @@ private:
 
     bool looping_;
     std::atomic<bool> quit_;
-    bool event_handleing_;
+    bool event_handling_;
     bool calling_pending_functors_;
     int64_t iteration_;
     const pid_t thread_ID_;
     // TODO
     // add timestamp poll return time
+    std::unique_ptr<Poller> poller_;
     // add unique_ptr of poller and timequeue
     int wakeup_fd_;
     // TODO
     // add context_
-    // add channel
+    ChannelLists active_channels_;
+    Channel *current_active_channel_;
     mutable MutexLock mutex_;
     std::vector<Functor> pending_functors_;
 };

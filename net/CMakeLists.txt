@@ -1,6 +1,8 @@
 # 设定源文件变量
 set(NET_SRCS
     EventLoop.cc
+    Channel.cc
+    Poller.cc
 )
 
 # 生成net_lib库

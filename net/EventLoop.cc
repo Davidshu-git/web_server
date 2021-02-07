@@ -12,8 +12,11 @@
 #include <cstdlib>
 #include <unistd.h>
 #include <cassert>
-
 #include <vector>
+#include <algorithm>
+
+#include "net/Channel.h"
+#include "net/Poller.h"
 
 using web_server::net::EventLoop;
 
@@ -42,7 +45,7 @@ EventLoop *EventLoop::get_event_loop_of_current_thread() {
 EventLoop::EventLoop() 
     : looping_(false),
       quit_(false),
-      event_handleing_(false),
+      event_handling_(false),
       calling_pending_functors_(false),
       iteration_(0),
       thread_ID_(current_thread::tid()),
@@ -68,10 +71,10 @@ void EventLoop::loop() {
 
     while (!quit_) {
         ++iteration_;
-        event_handleing_ = true;
+        event_handling_ = true;
         // TODO
         // add channel for loop
-        event_handleing_ = false;
+        event_handling_ = false;
         do_pending_functors();
     }
 
@@ -105,7 +108,27 @@ void EventLoop::queue_in_loop(Functor cb) {
 
 // TODO
 // add time function
-// add channel function
+void EventLoop::update_channel(Channel *channel) {
+    assert(channel->owner_loop() == this);
+    assert_in_loop_thread();
+    poller_->update_channel(channel);
+}
+
+void EventLoop::remove_channel(Channel *channel) {
+    assert(channel->owner_loop() == this);
+    assert_in_loop_thread();
+    if (event_handling_) {
+        assert(current_active_channel_ == channel ||
+            std::find(active_channels_.begin(), active_channels_.end(), channel) == active_channels_.end());
+    }
+    poller_->remove_channel(channel);
+}
+
+bool EventLoop::has_channel(Channel *channel) {
+    assert(channel->owner_loop() == this);
+    assert_in_loop_thread();
+    return poller_->has_channel(channel);
+}
 
 void EventLoop::abort_not_in_loop_thread() {
     printf("EventLoop thread_ID = %d, current thread id = %d\n", thread_ID_, current_thread::tid());
