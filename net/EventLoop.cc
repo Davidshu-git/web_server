@@ -15,9 +15,11 @@
 #include <cassert>
 #include <vector>
 #include <algorithm>
+#include <functional>
 
 #include "net/Channel.h"
 #include "net/Poller.h"
+#include "base/Logging.h"
 
 using web_server::net::EventLoop;
 
@@ -25,9 +27,12 @@ namespace  {
 
 __thread EventLoop *t_loop_in_this_thread = 0;
 
+const int kPollTimeMs = 10000;
+
 int create_event_fd() {
     int event_fd = ::eventfd(0, EFD_NONBLOCK | EFD_CLOEXEC);
     if(event_fd < 0) {
+        LOG_SYSERR << "Failed in eventfd";
         abort();
     }
     return event_fd;
@@ -50,16 +55,26 @@ EventLoop::EventLoop()
       calling_pending_functors_(false),
       iteration_(0),
       thread_ID_(current_thread::tid()),
+      poller_(Poller::new_default_poller(this)),
       wakeup_fd_(create_event_fd()),
-      mutex_() {
-    t_loop_in_this_thread = this;
-    // TODO
-    // add wakeup channel
+      wakeup_channel_(new Channel(this, wakeup_fd_)),
+      current_active_channel_(NULL) {
+    LOG_DEBUG << "EventLoop created " << this << " in thread " << thread_ID_;
+    if (t_loop_in_this_thread) {
+        LOG_FATAL << "Another EventLoop " << t_loop_in_this_thread 
+                  << " exists in this thread " << thread_ID_;
+    } else {
+        t_loop_in_this_thread = this;
+    }
+    wakeup_channel_->set_read_callback(std::bind(&EventLoop::handle_read, this));
+    wakeup_channel_->enable_reading();
 }
 
 EventLoop::~EventLoop() {
-    // TODO
-    // add channel
+    LOG_DEBUG << "EventLoop " << this << " of thread " << thread_ID_
+              << " destructs in thread " << current_thread::tid();
+    wakeup_channel_->disable_all();
+    wakeup_channel_->remove();
     ::close(wakeup_fd_);
     t_loop_in_this_thread = NULL;
 }
@@ -69,16 +84,25 @@ void EventLoop::loop() {
     assert_in_loop_thread();
     looping_ = true;
     quit_ = false;
+    LOG_TRACE << "EventLoop " << this << " start looping";
 
     while (!quit_) {
+        active_channels_.clear();
+        poll_return_time_ = poller_->poll(kPollTimeMs, &active_channels_);
         ++iteration_;
+        if (Logger::log_level() <= Logger::TRACE) {
+            print_active_channels();
+        }
         event_handling_ = true;
-        // TODO
-        // add channel for loop
+        for (Channel *channel : active_channels_) {
+            current_active_channel_ = channel;
+            current_active_channel_->handle_event(poll_return_time_);
+        }
+        current_active_channel_ = NULL;
         event_handling_ = false;
         do_pending_functors();
     }
-
+    LOG_TRACE << "EventLoop " << this << " stop looping";
     looping_ = false;
 }
 
@@ -90,7 +114,7 @@ void EventLoop::quit() {
 }
 
 void EventLoop::run_in_loop(Functor cb) {
-    if (!is_in_loop_thread()) {
+    if (is_in_loop_thread()) {
         cb();
     } else {
         queue_in_loop(cb);
@@ -132,15 +156,25 @@ bool EventLoop::has_channel(Channel *channel) {
 }
 
 void EventLoop::abort_not_in_loop_thread() {
-    printf("EventLoop thread_ID = %d, current thread id = %d\n", thread_ID_, current_thread::tid());
+    LOG_FATAL << "EventLoop::abortNotInLoopThread - EventLoop " << this
+              << " was created in threadId_ = " << thread_ID_
+              << ", current thread id = " <<  current_thread::tid();
 }
 
 void EventLoop::wakeup() {
-    printf("add socker operation\n");
+    uint64_t one = 1;
+    ssize_t n = write(wakeup_fd_, &one, sizeof one);
+    if (n != sizeof one) {
+        LOG_ERROR << "EventLoop::wakeup() writes " << n << " bytes instead of 8";
+    }
 }
 
 void EventLoop::handle_read() {
-    printf("add socker operation\n");
+    uint64_t one = 1;
+    ssize_t n = read(wakeup_fd_, &one, sizeof one);
+    if (n != sizeof one) {
+        LOG_ERROR << "EventLoop::handleRead() reads " << n << " bytes instead of 8";
+    }
 }
 
 void EventLoop::do_pending_functors() {
@@ -154,6 +188,12 @@ void EventLoop::do_pending_functors() {
         functor();
     }
     calling_pending_functors_ = false;
+}
+
+void EventLoop::print_active_channels() const {
+    for (Channel *channel : active_channels_) {
+        LOG_TRACE << "{" << channel->revents_to_string() << "} ";
+    }
 }
 
 } // namespace net

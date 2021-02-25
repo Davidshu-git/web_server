@@ -4,6 +4,8 @@ set(NET_SRCS
     Channel.cc
     Poller.cc
     poller/PollPoller.cc
+    poller/DefaultPoller.cc
+    poller/EPollPoller.cc
 )
 
 # 生成net_lib库

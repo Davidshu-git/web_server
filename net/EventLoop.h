@@ -17,6 +17,7 @@
 #include "base/Noncopyable.h"
 #include "base/Mutex.h"
 #include "base/CurrentThread.h"
+#include "base/Timestamp.h"
 
 namespace web_server {
 
@@ -24,6 +25,7 @@ namespace net {
 
 class Channel;
 class Poller;
+class TimerQueue;
 
 class EventLoop : private Noncopyable {
 public:
@@ -57,8 +59,11 @@ public:
 
     void loop();
     void quit();
-    // TODO
-    // add poll return time
+    
+    Timestamp poll_return_time() const {
+        return poll_return_time_;
+    }
+
     void run_in_loop(Functor cb);
     void queue_in_loop(Functor cb);
     // TODO
@@ -76,8 +81,8 @@ private:
     void abort_not_in_loop_thread();
     void handle_read();
     void do_pending_functors();
-    // TODO
-    // add print active channel for debug
+    
+    void print_active_channels() const;
 
     bool looping_;
     std::atomic<bool> quit_;
@@ -85,13 +90,12 @@ private:
     bool calling_pending_functors_;
     int64_t iteration_;
     const pid_t thread_ID_;
-    // TODO
-    // add timestamp poll return time
+    Timestamp poll_return_time_;
     std::unique_ptr<Poller> poller_;
-    // add unique_ptr of poller and timequeue
+    // std::unique_ptr<TimerQueue> time_queue_;
     int wakeup_fd_;
-    // TODO
-    // add context_
+    std::unique_ptr<Channel> wakeup_channel_;
+    //add boost any
     ChannelLists active_channels_;
     Channel *current_active_channel_;
     mutable MutexLock mutex_;
