@@ -17,7 +17,7 @@ namespace web_server {
 
 class CountDownLatch : private Noncopyable {
 public:
-    CountDownLatch(int count) : mutex_(), condition_(mutex_), count_(count) {}
+    explicit CountDownLatch(int count) : mutex_(), condition_(mutex_), count_(count) {}
 
     int get_count() const {
         MutexLockGuard lock(mutex_);

@@ -58,6 +58,10 @@ public:
         pthread_mutex_unlock(&mutex_);
     }
 
+    pid_t holder() const {
+        return holder_;
+    }
+
 private:
     pthread_mutex_t mutex_;
     pid_t holder_;
@@ -70,8 +74,18 @@ private:
         holder_ = current_thread::tid();
     }
 
-    // TODO
-    // UnassignGuard class
+    friend class Condition;
+    class UnassignGuard : private Noncopyable {
+    public:
+        explicit UnassignGuard(MutexLock& owner) : owner_(owner) {
+        owner_.unassign_holder();
+        }
+        ~UnassignGuard() {
+        owner_.assign_holder();
+        }
+    private:
+        MutexLock& owner_;
+  };
 };
 
 class MutexLockGuard : private Noncopyable {

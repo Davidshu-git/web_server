@@ -1,6 +1,10 @@
 {
     "files.associations": {
         "functional": "cpp",
-        "string": "cpp"
+        "string": "cpp",
+        "cstring": "cpp",
+        "limits": "cpp",
+        "cerrno": "cpp",
+        "cstdio": "cpp"
     }
 }

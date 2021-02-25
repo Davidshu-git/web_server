@@ -19,3 +19,9 @@ add_test(NAME thread_test COMMAND thread_test)
 add_executable(timestamp_unittest Timestamp_unittest.cc)
 target_link_libraries(timestamp_unittest base_lib)
 add_test(NAME timestamp_unittest COMMAND timestamp_unittest)
+
+add_executable(logging_test Logging_test.cc)
+target_link_libraries(logging_test base_lib)
+
+add_executable(threadpool_test ThreadPool_test.cc)
+target_link_libraries(threadpool_test base_lib)

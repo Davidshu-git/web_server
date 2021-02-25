@@ -11,9 +11,9 @@
 
 #include <functional>
 #include <pthread.h>
+#include <string>
 
 #include "base/Noncopyable.h"
-#include "base/Types.h"
 #include "base/Atomic.h"
 #include "base/CountDownLatch.h"
 
@@ -22,7 +22,7 @@ namespace web_server {
 class Thread : private Noncopyable {
 public:
     using ThreadFunction = std::function<void()>;
-    Thread(const ThreadFunction &func, const string &name = string());
+    Thread(const ThreadFunction &func, const std::string &name = std::string());
     ~Thread();
 
     bool started() const {
@@ -33,7 +33,7 @@ public:
         return tid_;
     }
 
-    const string &name() const {
+    const std::string &name() const {
         return name_;
     }
 
@@ -51,7 +51,7 @@ private:
     pthread_t pthread_ID_;
     pid_t tid_;
     ThreadFunction func_;
-    string name_;
+    std::string name_;
     CountDownLatch latch_;
     
     static AtomicInt32 num_created_;

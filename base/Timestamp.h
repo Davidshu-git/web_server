@@ -9,10 +9,10 @@
 #ifndef WEB_SERVER_BASE_TIMESTAMP_H
 #define WEB_SERVER_BASE_TIMESTAMP_H
 
+#include <string>
 #include <ctime>
 #include <boost/operators.hpp>
 
-#include "base/Types.h"
 #include "base/Copyable.h"
 
 namespace web_server {
@@ -27,9 +27,9 @@ public:
         std::swap(micro_seconds_since_epoch_, object.micro_seconds_since_epoch_);
     }
 
-    string to_string() const;
-    string to_formatted_string(bool show_micro_seconds = true) const;
-
+    std::string to_string() const;
+    std::string to_formatted_string(bool show_micro_seconds = true) const;
+    
     bool valid() const {
         return micro_seconds_since_epoch_ > 0;
     }

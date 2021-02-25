@@ -4,6 +4,9 @@ set(BASE_SRCS
     CurrentThread.cc
     CountDownLatch.cc
     Timestamp.cc
+    Logging.cc
+    LogStream.cc
+    ThreadPool.cc
 )
 
 # 生成base_lib库

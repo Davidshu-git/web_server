@@ -3,6 +3,7 @@ set(NET_SRCS
     EventLoop.cc
     Channel.cc
     Poller.cc
+    poller/PollPoller.cc
 )
 
 # 生成net_lib库

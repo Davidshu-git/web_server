@@ -12,8 +12,7 @@ namespace web_server {
 
 void CountDownLatch::wait() {
     MutexLockGuard lock(mutex_);
-    while (count_ > 0)
-    {
+    while (count_ > 0) {
         condition_.wait();
     }
 }

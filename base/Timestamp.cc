@@ -10,16 +10,17 @@
 
 #include <sys/time.h>
 #include <cstdio>
+#include <string>
 
 namespace web_server {
 
-string Timestamp::to_string() const {
+std::string Timestamp::to_string() const {
     int64_t seconds = micro_seconds_since_epoch_ / k_micro_seconds_per_second;
     int64_t microseconds = micro_seconds_since_epoch_ % k_micro_seconds_per_second;
     return std::to_string(seconds) + "." + std::to_string(microseconds);
 }
 
-string Timestamp::to_formatted_string(bool show_micro_seconds) const {
+std::string Timestamp::to_formatted_string(bool show_micro_seconds) const {
     char buffer[64] = {0};
     time_t seconds = static_cast<time_t>(micro_seconds_since_epoch_ / k_micro_seconds_per_second);
     struct tm tm_time;

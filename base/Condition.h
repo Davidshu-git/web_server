@@ -24,8 +24,7 @@ public:
     }
 
     void wait() {
-        // TODO
-        // add UnassignGuard class
+        MutexLock::UnassignGuard ug(mutex_);
         pthread_cond_wait(&pcond_, mutex_.get_pthread_mutex());
     }
 

@@ -10,11 +10,10 @@
 
 #include <cstdio>
 #include <cassert>
+#include <string>
 #include <pthread.h>
 #include <sys/prctl.h>
 
-
-#include "base/Types.h"
 #include "base/CurrentThread.h"
 
 namespace web_server {
@@ -38,14 +37,19 @@ public:
 
 ThreadNameInitializer init;
 
+/**
+ * @brief 线程start时需要对其进行参数传递，这个类是对参数的封装
+ * 在这个参数封装类中包含了需要运行的函数
+ * 
+ */
 struct ThreadData {
     using ThreadFunction = web_server::Thread::ThreadFunction;
     ThreadFunction func_;
-    string name_;
+    std::string name_;
     pid_t *tid_;
     CountDownLatch *latch_;
 
-    ThreadData(const ThreadFunction &func, const string &name, pid_t *tid, CountDownLatch *latch)
+    ThreadData(const ThreadFunction &func, const std::string &name, pid_t *tid, CountDownLatch *latch)
         : func_(func), name_(name), tid_(tid), latch_(latch) {}
 
     void run_in_thread() {
@@ -62,6 +66,13 @@ struct ThreadData {
     }
 };
 
+/**
+ * @brief start线程对象时，该函数作为线程的执行函数
+ * 实际上是调用了ThreadData中的run_in_thread函数
+ * 
+ * @param object 
+ * @return void* 
+ */
 void *start_thread(void *object) {
     ThreadData *data = static_cast<ThreadData *>(object);
     data->run_in_thread();
@@ -71,7 +82,7 @@ void *start_thread(void *object) {
 
 } // namespace detail
 
-Thread::Thread(const ThreadFunction &func, const string &name)
+Thread::Thread(const ThreadFunction &func, const std::string &name)
     : started_(false), 
       joined_(false), 
       pthread_ID_(0), 
@@ -82,12 +93,10 @@ Thread::Thread(const ThreadFunction &func, const string &name)
     set_default_name();
 }
 
-Thread::~Thread() {
-    if(started_ && !joined_) {
-        pthread_detach(pthread_ID_);
-    }
-}
-
+/**
+ * @brief 使用原子方式计数，用于线程名称
+ * 
+ */
 AtomicInt32 Thread::num_created_;
 
 void Thread::set_default_name() {
@@ -99,6 +108,21 @@ void Thread::set_default_name() {
     }
 }
 
+/**
+ * @brief Destroy the Thread:: Thread object
+ * 若没有通过join回收，则使用detach的方式回收资源
+ * 
+ */
+Thread::~Thread() {
+    if(started_ && !joined_) {
+        pthread_detach(pthread_ID_);
+    }
+}
+
+/**
+ * @brief 线程对象启动，创建运行的线程
+ * 
+ */
 void Thread::start() {
     assert(!started_);
     started_ = true;
@@ -113,6 +137,11 @@ void Thread::start() {
     }
 }
 
+/**
+ * @brief 线程对象销毁
+ * 
+ * @return int 
+ */
 int Thread::join() {
     assert(started_);
     assert(!joined_);
