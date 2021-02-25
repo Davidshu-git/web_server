@@ -93,7 +93,6 @@ ThreadPool::Task ThreadPool::take() {
 }
 
 bool ThreadPool::isFull() const {
-    // LOG_INFO << "current thread = " << current_thread::tid() << " mutex holder = " << mutex_.holder();
     mutex_.assert_locked();
     return maxQueueSize_ > 0 && queue_.size() >= maxQueueSize_;
 }

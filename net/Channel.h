@@ -13,6 +13,7 @@
 
 #include <functional>
 #include <memory>
+#include <string>
 
 #include "base/Timestamp.h"
 
@@ -22,7 +23,7 @@ namespace net {
 
 class EventLoop;
 
-class Channel : Noncopyable {
+class Channel : private Noncopyable {
 public:
     using EventCallback = std::function<void()>;
     using ReadEventCallback = std::function<void(Timestamp)>;
@@ -51,7 +52,9 @@ public:
     int events() const {
         return events_;
     }
-    // TODO set_revents
+    void set_revents(int revents) {
+        revents_ = revents;
+    }
     bool is_nonevent() const {
         return events_ == k_nonevent;
     }
@@ -90,14 +93,21 @@ public:
     void set_index(int idx) {
         index_ = idx;
     }
-    // TODO Debug function
+    
+    std::string events_to_string() const;
+    std::string revents_to_string() const;
+
+    void do_not_log_hup() {
+        log_hup_ = false;
+    }
     EventLoop *owner_loop() {
         return loop_;
     }
     void remove();
 private:
+    static std::string events_to_string(int fd, int ev);
     void update();
-
+    void handle_event_with_guard(Timestamp receive_time);
     ReadEventCallback read_callback_;
     EventCallback write_callback_;
     EventCallback close_callback_;
@@ -110,8 +120,11 @@ private:
     EventLoop *loop_;
     const int fd_;
     int events_;
+    int revents_;
     int index_;
+    bool log_hup_;
 
+    std::weak_ptr<void> tie_;
     bool tied_;
     bool event_handling_;
     bool added_to_loop_;

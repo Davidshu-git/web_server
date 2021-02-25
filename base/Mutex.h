@@ -58,10 +58,6 @@ public:
         pthread_mutex_unlock(&mutex_);
     }
 
-    pid_t holder() const {
-        return holder_;
-    }
-
 private:
     pthread_mutex_t mutex_;
     pid_t holder_;
