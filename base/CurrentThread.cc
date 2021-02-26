@@ -35,6 +35,11 @@ __thread char t_tid_string[32];
 __thread int t_tid_string_length = 6;
 __thread const char *t_thread_name = "unknown";
 
+/**
+ * @brief 将系统调用中得到的tid信息缓存到当前线程存储设施中
+ * 该设施以关键字__thread修饰
+ * 
+ */
 void cached_tid() {
     if(t_cached_tid == 0) {
         t_cached_tid = detail::gettid();

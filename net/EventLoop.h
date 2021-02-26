@@ -74,6 +74,13 @@ public:
     bool has_channel(Channel *channel);
     // TODO
     // add context function
+
+    /**
+     * @brief Get the event loop of current thread object
+     * 使用__thread 存储设施存放EventLoop类型指针，指向当前线程中的event loop
+     * 
+     * @return EventLoop* 
+     */
     static EventLoop *get_event_loop_of_current_thread();
 
 private:
@@ -84,10 +91,12 @@ private:
     
     void print_active_channels() const;
 
+    // show status
     bool looping_;
     std::atomic<bool> quit_;
     bool event_handling_;
     bool calling_pending_functors_;
+
     int64_t iteration_;
     const pid_t thread_ID_;
     Timestamp poll_return_time_;
@@ -96,8 +105,11 @@ private:
     int wakeup_fd_;
     std::unique_ptr<Channel> wakeup_channel_;
     //add boost any
+
+    // manage channel
     ChannelLists active_channels_;
     Channel *current_active_channel_;
+
     mutable MutexLock mutex_;
     std::vector<Functor> pending_functors_;
 };

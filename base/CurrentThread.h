@@ -26,6 +26,12 @@ void cached_tid();
 
 bool is_main_thread();
 
+/**
+ * @brief 使用封装好的函数获取系统tid信息
+ * 调用此函数将执行将tid信息缓存到当前线程的任务
+ * 
+ * @return int 
+ */
 inline int tid() {
     if(unlikely(t_cached_tid == 0)) {
         cached_tid();
