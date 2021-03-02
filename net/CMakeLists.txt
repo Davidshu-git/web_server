@@ -6,6 +6,7 @@ set(NET_SRCS
     poller/PollPoller.cc
     poller/DefaultPoller.cc
     poller/EPollPoller.cc
+    InetAddress.cc
 )
 
 # 生成net_lib库
