@@ -59,6 +59,10 @@ void PollPoller::fill_active_channels(int num_events, ChannelLists *active_chann
 void PollPoller::update_channel(Channel *channel) {
     Poller::assert_in_loop_thread();
     LOG_TRACE << "fd = " << channel->fd() << " events = " << channel->events();
+    // 若该channel是新的，需要进行添加到channellist和pollfds_
+    // 若是已经添加到channellist中的channel，可能不在关注列表pollfds_中，也可能在关注列表
+    // 对应处理手段是，不管在不在pollfds_中，都对其进行事件更新，将channel中的信息补充到pollfd中
+    // 若是对于该文件描述符设定为不关心，pfd中的fd设置为- fd - 1
     if (channel->index() < 0) {
         assert(channels_.find(channel->fd()) == channels_.end());
         struct pollfd pfd;
@@ -85,6 +89,11 @@ void PollPoller::update_channel(Channel *channel) {
     }
 }
 
+/**
+ * @brief 从指定的poller对象中移除channel，从channellist和pollfds_中进行修改
+ * 
+ * @param channel 
+ */
 void PollPoller::remove_channel(Channel *channel) {
     Poller::assert_in_loop_thread();
     LOG_TRACE << "fd = " << channel->fd();
@@ -94,7 +103,7 @@ void PollPoller::remove_channel(Channel *channel) {
     int idx = channel->index();
     assert(0 <= idx && idx < static_cast<int>(pollfds_.size()));
     const struct pollfd& pfd = pollfds_[idx];
-    assert(pfd.fd == -channel->fd()-1 && pfd.events == channel->events());
+    assert(pfd.fd == -channel->fd() - 1 && pfd.events == channel->events());
     size_t n = channels_.erase(channel->fd());
     assert(n == 1);
     if (idx == (static_cast<int>(pollfds_.size()) - 1)) {
