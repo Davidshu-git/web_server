@@ -7,6 +7,8 @@ set(NET_SRCS
     poller/DefaultPoller.cc
     poller/EPollPoller.cc
     InetAddress.cc
+    Socket.cc
+    Buffer.cc
 )
 
 # 生成net_lib库
