@@ -9,6 +9,7 @@ set(NET_SRCS
     InetAddress.cc
     Socket.cc
     Buffer.cc
+    TcpConnection.cc
 )
 
 # 生成net_lib库

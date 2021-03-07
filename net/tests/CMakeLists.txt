@@ -5,3 +5,7 @@ add_test(NAME eventloop_unittest COMMAND eventloop_unittest)
 add_executable(inetaddress_unittest InetAddress_unittest.cc)
 target_link_libraries(inetaddress_unittest net_lib)
 add_test(NAME inetaddress_unittest COMMAND inetaddress_unittest)
+
+add_executable(buffer_unittest Buffer_unittest.cc)
+target_link_libraries(buffer_unittest net_lib)
+add_test(NAME buffer_unittest COMMAND buffer_unittest)

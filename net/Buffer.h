@@ -133,8 +133,142 @@ public:
     }
 
     std::string retrieve_all_as_string() {
-
+        return retrieve_as_string(readable_bytes());
     }
+
+    void ensure_writable_bytes(size_t len) {
+        if (writable_bytes() < len) {
+            make_space(len);
+        }
+        assert(writable_bytes() >= len);
+    }
+
+    void has_written(size_t len) {
+        assert(len <= writable_bytes());
+        writer_index_ += len;
+    }
+
+    void unwrite(size_t len) {
+        assert(len <= readable_bytes());
+        writer_index_ -= len;
+    }
+
+    void append(const char *data, size_t len) {
+        ensure_writable_bytes(len);
+        std::copy(data, data + len, begin_write());
+        has_written(len);
+    }
+
+    void append(const void *data, size_t len) {
+        append(static_cast<const char *>(data), len);
+    }
+
+    void append_int64(int64_t x) {
+        int64_t be64 = htobe64(x);
+        append(&be64, sizeof be64);
+    }
+    void append_int32(int32_t x) {
+        int32_t be32 = htobe32(x);
+        append(&be32, sizeof be32);
+    }
+
+    void append_int16(int16_t x) {
+        int16_t be16 = htobe16(x);
+        append(&be16, sizeof be16);
+    }
+
+    void append_int8(int8_t x) {
+        append(&x, sizeof x);
+    }
+
+    int64_t peek_int64() const {
+        assert(readable_bytes() >= sizeof(int64_t));
+        int64_t be64 = 0;
+        ::memcpy(&be64, peek(), sizeof be64);
+        return be64toh(be64);
+    }
+
+    int32_t peek_int32() const {
+        assert(readable_bytes() >= sizeof(int32_t));
+        int32_t be32 = 0;
+        ::memcpy(&be32, peek(), sizeof be32);
+        return be32toh(be32);
+    }
+
+    int16_t peek_int16() const {
+        assert(readable_bytes() >= sizeof(int16_t));
+        int16_t be16 = 0;
+        ::memcpy(&be16, peek(), sizeof be16);
+        return be16toh(be16);
+    }
+
+    int8_t peek_int8() const {
+        assert(readable_bytes() >= sizeof(int8_t));
+        int8_t x = *peek();
+        return x;
+    }
+
+    int64_t read_int64() {
+        int64_t result = peek_int64();
+        retrieve_int64();
+        return result;
+    }
+
+    int32_t read_int32() {
+        int32_t result = peek_int32();
+        retrieve_int32();
+        return result;
+    }
+
+    int16_t read_int16() {
+        int16_t result = peek_int16();
+        retrieve_int16();
+        return result;
+    }
+
+    int8_t read_int8() {
+        int8_t result = peek_int8();
+        retrieve_int8();
+        return result;
+    }
+
+    void prepend(const void *data, size_t len) {
+        assert(len <= prependable_bytes());
+        reader_index_ -= len;
+        const char *d =static_cast<const char*>(data);
+        std::copy(d, d+len, begin() + reader_index_);
+    }
+
+    void prepend_int64(int64_t x) {
+        int64_t be64 = htobe64(x);
+        prepend(&be64, sizeof be64);
+    }
+
+    void prepend_int32(int32_t x) {
+        int32_t be32 = htobe32(x);
+        prepend(&be32, sizeof be32);
+    }
+
+    void prepend_int16(int16_t x) {
+        int16_t be16 = htobe16(x);
+        prepend(&be16, sizeof be16);
+    }
+
+    void prepend_int8(int8_t x) {
+        prepend(&x, sizeof x);
+    }
+
+    void shrink(size_t reserve) {
+        Buffer other;
+        other.ensure_writable_bytes(readable_bytes() + reserve);
+        swap(other);
+    }
+
+    size_t internal_capacity() const {
+        return buffer_.capacity();
+    }
+
+    ssize_t read_fd(int fd, int *saved_errno);
 
 private:
     std::vector<char> buffer_;
