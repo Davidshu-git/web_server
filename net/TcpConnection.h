@@ -58,8 +58,8 @@ public:
     bool disconnected() const {
         return state_ == kDisconnected;
     }
-    bool get_tcp_info(struct tcp_info *) const;
-    std::string get_tcp_info_string() const;
+    // bool get_tcp_info(struct tcp_info *) const;
+    // std::string get_tcp_info_string() const;
 
     void send(const void *message, size_t len);
     void send(const std::string &message);
