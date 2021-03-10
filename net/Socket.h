@@ -46,6 +46,7 @@ namespace sockets {
 
 int get_socket_error(int sockfd);
 bool is_self_connect(int sockfd);
+int create_nonblocking();
 
 } // namespace sockets
 

@@ -156,6 +156,14 @@ bool is_self_connect(int sockfd) {
            local_addr.sin_addr.s_addr == peer_addr.sin_addr.s_addr;
 }
 
+int create_nonblocking() {
+    int sockfd = ::socket(AF_INET, SOCK_STREAM | SOCK_NONBLOCK | SOCK_CLOEXEC, IPPROTO_TCP);
+    if (sockfd < 0) {
+        LOG_SYSFATAL << "sockets::create_nonblocking";
+    }
+    return sockfd;
+}
+
 } // namespace sockets
 
 } // namespace net

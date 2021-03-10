@@ -11,6 +11,7 @@ set(NET_SRCS
     Buffer.cc
     TcpConnection.cc
     Connector.cc
+    Acceptor.cc
 )
 
 # 生成net_lib库
