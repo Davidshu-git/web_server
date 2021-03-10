@@ -12,6 +12,8 @@ set(NET_SRCS
     TcpConnection.cc
     Connector.cc
     Acceptor.cc
+    Timer.cc
+    TimeQueue.cc
 )
 
 # 生成net_lib库
