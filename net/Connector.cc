@@ -169,7 +169,8 @@ void Connector::retry(int sockfd) {
     if (connect_) {
         LOG_INFO << "Connector::retry - Retry connecting to " << server_addr_.to_IP_port()
                  << " in " << retry_delay_ms_ << " milliseconds. ";
-        // TODO add run after function;
+        loop_->run_after(retry_delay_ms_ / 1000.0,
+                         std::bind(&Connector::start_in_loop, shared_from_this()));
         retry_delay_ms_ = std::min(retry_delay_ms_ * 2, k_max_retry_delay_ms);
     } else {
         LOG_DEBUG << "do not connect";

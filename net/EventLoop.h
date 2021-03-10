@@ -18,6 +18,8 @@
 #include "base/Mutex.h"
 #include "base/CurrentThread.h"
 #include "base/Timestamp.h"
+#include "net/TimerID.h"
+#include "net/Callbacks.h"
 
 namespace web_server {
 
@@ -33,6 +35,13 @@ public:
 
     EventLoop();
     ~EventLoop();
+
+    void loop();
+    void quit();
+
+    Timestamp poll_return_time() const {
+        return poll_return_time_;
+    }
 
     int64_t iteration() const {
         return iteration_;
@@ -57,17 +66,14 @@ public:
         return pending_functors_.size();
     }
 
-    void loop();
-    void quit();
-    
-    Timestamp poll_return_time() const {
-        return poll_return_time_;
-    }
-
     void run_in_loop(Functor cb);
     void queue_in_loop(Functor cb);
-    // TODO
-    // add timer function
+    
+    TimerID run_at(Timestamp time, TimerCallback cb);
+    TimerID run_after(double delay, TimerCallback cb);
+    TimerID run_every(double interval, TimerCallback cb);
+    void cancel(TimerID timer_ID);
+
     void wakeup();
     void update_channel(Channel *channel);
     void remove_channel(Channel *channel);
@@ -101,7 +107,7 @@ private:
     const pid_t thread_ID_;
     Timestamp poll_return_time_;
     std::unique_ptr<Poller> poller_;
-    // std::unique_ptr<TimerQueue> time_queue_;
+    std::unique_ptr<TimerQueue> timer_queue_;
     int wakeup_fd_;
     std::unique_ptr<Channel> wakeup_channel_;
     //add boost any

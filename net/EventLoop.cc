@@ -17,9 +17,10 @@
 #include <algorithm>
 #include <functional>
 
+#include "base/Logging.h"
 #include "net/Channel.h"
 #include "net/Poller.h"
-#include "base/Logging.h"
+#include "net/TimerQueue.h"
 
 using web_server::net::EventLoop;
 
@@ -131,8 +132,24 @@ void EventLoop::queue_in_loop(Functor cb) {
     }
 }
 
-// TODO
-// add time function
+TimerID EventLoop::run_at(Timestamp time, TimerCallback cb) {
+    return timer_queue_->add_timer(cb, time, 0.0);
+}
+
+TimerID EventLoop::run_after(double delay, TimerCallback cb) {
+    Timestamp time(add_time(Timestamp::now(), delay));
+    return run_at(time, cb);
+}
+
+TimerID EventLoop::run_every(double interval, TimerCallback cb) {
+    Timestamp time(add_time(Timestamp::now(), interval));
+    return timer_queue_->add_timer(cb, time, interval);
+}
+
+void EventLoop::cancel(TimerID timer_ID) {
+    return timer_queue_->cancel(timer_ID);
+}
+
 void EventLoop::update_channel(Channel *channel) {
     assert(channel->owner_loop() == this);
     assert_in_loop_thread();
