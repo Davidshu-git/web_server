@@ -13,7 +13,7 @@ set(NET_SRCS
     Connector.cc
     Acceptor.cc
     Timer.cc
-    TimeQueue.cc
+    TimerQueue.cc
 )
 
 # 生成net_lib库
