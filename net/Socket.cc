@@ -137,6 +137,27 @@ void Socket::set_keep_alive(bool on) {
                  static_cast<socklen_t>(sizeof opt));
 }
 
+namespace sockets {
+
+int get_socket_error(int sockfd) {
+    int optval;
+    socklen_t optlen = static_cast<socklen_t>(sizeof optval);
+    if (::getsockopt(sockfd, SOL_SOCKET, SO_ERROR, &optval, &optlen) < 0) {
+        return errno;
+    } else {
+        return optval;
+    }
+}
+
+bool is_self_connect(int sockfd) {
+    struct sockaddr_in local_addr = InetAddress::get_local_addr(sockfd);
+    struct sockaddr_in peer_addr = InetAddress::get_peer_addr(sockfd);
+    return local_addr.sin_port == peer_addr.sin_port &&
+           local_addr.sin_addr.s_addr == peer_addr.sin_addr.s_addr;
+}
+
+} // namespace sockets
+
 } // namespace net
 
 } // namespace web_sever

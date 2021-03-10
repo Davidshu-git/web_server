@@ -42,6 +42,9 @@ public:
         return addr_.sin_port;
     };
 
+    static sockaddr_in get_local_addr(int sockfd);
+    static sockaddr_in get_peer_addr(int sockfd);
+
 private:
     struct sockaddr_in addr_;
 };

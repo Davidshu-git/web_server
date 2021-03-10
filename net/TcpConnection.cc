@@ -159,15 +159,9 @@ void TcpConnection::handle_close() {
     close_callback_(guard_this);
 }
 void TcpConnection::handle_error(){
-    int optval;
-    socklen_t optlen = static_cast<socklen_t>(sizeof optval);
-    if (::getsockopt(channel_->fd(), SOL_SOCKET, SO_ERROR, &optval, &optlen) < 0) {
-        LOG_ERROR << "TcpConnection::handleError [" << name_
-                  << "] - SO_ERROR = " << errno << " " << strerror_tl(errno);
-    } else {
-        LOG_ERROR << "TcpConnection::handleError [" << name_
-                  << "] - SO_ERROR = " << optval << " " << strerror_tl(optval);
-    }
+    int err = sockets::get_socket_error(channel_->fd());
+    LOG_ERROR << "TcpConnection::handle_error [" << name_
+                  << "] - SO_ERROR = " << err << " " << strerror_tl(err);
 }
 
 void TcpConnection::send_in_loop(const std::string &message){

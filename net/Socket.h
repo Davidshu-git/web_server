@@ -42,6 +42,13 @@ private:
     const int sockfd_;
 };
 
+namespace sockets {
+
+int get_socket_error(int sockfd);
+bool is_self_connect(int sockfd);
+
+} // namespace sockets
+
 } // namespace net
 
 } // namespace web_server
