@@ -7,8 +7,10 @@
  */
 
 #include "base/CurrentThread.h"
+#include "base/Timestamp.h"
 
 #include <sys/syscall.h>
+#include <sys/types.h>
 #include <unistd.h>
 #include <cstdio>
 
@@ -50,6 +52,13 @@ void cached_tid() {
 
 bool is_main_thread() {
     return tid() == ::getpid();
+}
+
+void sleep_usec(int64_t usec) {
+    struct timespec ts = {0, 0};
+    ts.tv_sec = static_cast<time_t>(usec / Timestamp::k_micro_seconds_per_second);
+    ts.tv_nsec = static_cast<long>(usec % Timestamp::k_micro_seconds_per_second);
+    ::nanosleep(&ts, NULL);
 }
 
 } // namespace current_thread

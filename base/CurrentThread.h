@@ -13,6 +13,8 @@
 #define likely(x) __builtin_expect(!!(x), 1) // x more likely be true
 #define unlikely(x) __builtin_expect(!!(x), 0) // x more likely be false
 
+#include <cstdint>
+
 namespace web_server {
 
 namespace current_thread {
@@ -25,6 +27,8 @@ extern __thread const char *t_thread_name;
 void cached_tid();
 
 bool is_main_thread();
+
+void sleep_usec(int64_t usec);
 
 /**
  * @brief 使用封装好的函数获取系统tid信息
