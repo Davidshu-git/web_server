@@ -17,6 +17,7 @@ set(NET_SRCS
     TcpServer.cc
     EventLoopThread.cc
     EventLoopThreadPool.cc
+    TcpClient.cc
 )
 
 # 生成net_lib库
