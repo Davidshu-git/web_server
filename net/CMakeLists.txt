@@ -14,6 +14,8 @@ set(NET_SRCS
     Acceptor.cc
     Timer.cc
     TimerQueue.cc
+    TcpServer.cc
+    EventLoopThread.cc
 )
 
 # 生成net_lib库
