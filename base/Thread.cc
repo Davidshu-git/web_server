@@ -61,6 +61,7 @@ void *start_thread(void *object) {
     ThreadData *data = static_cast<ThreadData *>(object);
     data->run_in_thread();
     delete data;
+    return nullptr;
 }
 
 } // namespace detail
