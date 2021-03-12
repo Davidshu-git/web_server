@@ -26,7 +26,8 @@ void thread_func() {
     assert(EventLoop::get_event_loop_of_current_thread() == NULL);
     EventLoop loop;
     assert(EventLoop::get_event_loop_of_current_thread() == &loop);
-    loop.run_in_loop(callback);
+    loop.run_after(1.0, callback);
+    loop.loop();
 }
 
 int main() {

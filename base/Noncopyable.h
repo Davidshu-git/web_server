@@ -13,15 +13,16 @@ namespace web_server {
 
 /**
  * @brief 不可拷贝的父类
- * 
+ * 将构造和析构函数声明权限为protected，该类本身不可构造析构
+ * 派生类也可以构造和析构
+ * 拷贝构造和拷贝赋值进行delete则子类不可拷贝
+ * 将拷贝构造和拷贝赋值声明为private也可以达到相同效果
  */
 class Noncopyable {
 public:
-    // 将拷贝构造和拷贝赋值进行delete定义
     Noncopyable(const Noncopyable &) = delete;
     Noncopyable operator=(const Noncopyable &) = delete;
 protected:
-    // 定义默认的构造和析构函数为protected表示：不让该类用户构造和析构，允许该类派生类构造和析构
     Noncopyable() = default;
     ~Noncopyable() = default;
 };

@@ -11,6 +11,11 @@
 
 namespace web_server {
 
+/**
+ * @brief 声明为protected权限
+ * 对于派生类仍然是可用的，派生类拥有基类的构造和析构函数访问权限
+ * 可正常进行copy操作，因为默认有拷贝构造和拷贝赋值
+ */
 class Copyable {
 protected:
     Copyable() = default;

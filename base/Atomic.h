@@ -57,8 +57,12 @@ public:
     }
 
 private:
+    /**
+     * @brief 被valatile修饰表示这个变量可以被某些编译器未知的因素修改
+     * 加上这个关键字可避免因编译器优化导致的问题
+     * 强调读取时必须从内存地址读取
+     */
     volatile T value_;
-
 };
 
 } // namespace detail

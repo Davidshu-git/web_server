@@ -19,6 +19,11 @@ namespace web_server {
 
 namespace current_thread {
 
+/**
+ * @brief 线程内部存储设施关键字 __thread
+ * 用于保存每个线程用的变量，每个线程都存放一份独立实体
+ * 这里用来保存线程的tid信息，如名称等内容
+ */
 extern __thread int t_cached_tid;
 extern __thread char t_tid_string[32];
 extern __thread int t_tid_string_length;
@@ -33,7 +38,6 @@ void sleep_usec(int64_t usec);
 /**
  * @brief 使用封装好的函数获取系统tid信息
  * 调用此函数将执行将tid信息缓存到当前线程的任务
- * 
  * @return int 
  */
 inline int tid() {

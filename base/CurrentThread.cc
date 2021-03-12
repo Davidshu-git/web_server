@@ -19,8 +19,10 @@ namespace web_server {
 namespace detail{
 
 /**
- * @brief 用于不同进程间的线程通讯，由于glibc没实现这个gettid，需要利用syscall
- * 
+ * @brief 用于不同进程间的线程通讯
+ * 获得线程实际的进程id
+ * 由于glibc没实现这个gettid
+ * 需要利用syscall
  * @return pid_t 
  */
 pid_t gettid() {
@@ -40,7 +42,6 @@ __thread const char *t_thread_name = "unknown";
 /**
  * @brief 将系统调用中得到的tid信息缓存到当前线程存储设施中
  * 该设施以关键字__thread修饰
- * 
  */
 void cached_tid() {
     if(t_cached_tid == 0) {
@@ -50,14 +51,24 @@ void cached_tid() {
     }
 }
 
+/**
+ * @brief 判断是不是主线程的方法就是将该线程进程id与当前pid比较
+ * 若相同则为主线程
+ * @return true 
+ * @return false 
+ */
 bool is_main_thread() {
     return tid() == ::getpid();
 }
 
+/**
+ * @brief 短延迟函数，停止执行一段微秒为单位的时间
+ * @param usec 微秒
+ */
 void sleep_usec(int64_t usec) {
     struct timespec ts = {0, 0};
     ts.tv_sec = static_cast<time_t>(usec / Timestamp::k_micro_seconds_per_second);
-    ts.tv_nsec = static_cast<long>(usec % Timestamp::k_micro_seconds_per_second);
+    ts.tv_nsec = static_cast<long>(usec % Timestamp::k_micro_seconds_per_second * 1000);
     ::nanosleep(&ts, NULL);
 }
 

@@ -1,5 +1,5 @@
 /**
- * @brief 
+ * @brief thread类的源文件
  * Copyright (c) 2021, David Shu. All rights reserved.
  * 
  * Use of this source code is governed by a GPL license
@@ -20,27 +20,9 @@ namespace web_server {
 
 namespace detail {
 
-void after_fork() {
-    current_thread::t_cached_tid = 0;
-    current_thread::t_thread_name = "main";
-    current_thread::tid();
-}
-
-class ThreadNameInitializer {
-public:
-    ThreadNameInitializer() {
-        current_thread::t_thread_name = "main";
-        current_thread::tid();
-        pthread_atfork(NULL, NULL, &after_fork);
-    }
-};
-
-ThreadNameInitializer init;
-
 /**
  * @brief 线程start时需要对其进行参数传递，这个类是对参数的封装
  * 在这个参数封装类中包含了需要运行的函数
- * 
  */
 struct ThreadData {
     using ThreadFunction = web_server::Thread::ThreadFunction;
@@ -59,9 +41,11 @@ struct ThreadData {
         latch_ = nullptr;
 
         web_server::current_thread::t_thread_name = name_.empty() ? "web_server_thread" : name_.c_str();
+        // 将这个名称设置到系统进程名称中去
         ::prctl(PR_SET_NAME, web_server::current_thread::t_thread_name);
 
         func_();
+        // 执行完线程该完成的任务后，这个线程的名称就改为finished
         web_server::current_thread::t_thread_name = "finished";
     }
 };
@@ -69,7 +53,7 @@ struct ThreadData {
 /**
  * @brief start线程对象时，该函数作为线程的执行函数
  * 实际上是调用了ThreadData中的run_in_thread函数
- * 
+ * 该函数实际上是对ThreadDate做了类型转换和资源回收
  * @param object 
  * @return void* 
  */
@@ -77,11 +61,17 @@ void *start_thread(void *object) {
     ThreadData *data = static_cast<ThreadData *>(object);
     data->run_in_thread();
     delete data;
-    return NULL;
 }
 
 } // namespace detail
 
+/**
+ * @brief Construct a new Thread
+ * 但是并没有真正启动一个线程，真正的线程还没出现
+ * 主要是为启动线程准备数据，如线程执行函数、线程名称等
+ * @param func 
+ * @param name 
+ */
 Thread::Thread(const ThreadFunction &func, const std::string &name)
     : started_(false), 
       joined_(false), 
@@ -95,7 +85,7 @@ Thread::Thread(const ThreadFunction &func, const std::string &name)
 
 /**
  * @brief 使用原子方式计数，用于线程名称
- * 
+ * 静态成员变量在类外定义初始化，调用默认构造函数初始化为0
  */
 AtomicInt32 Thread::num_created_;
 
@@ -111,7 +101,6 @@ void Thread::set_default_name() {
 /**
  * @brief Destroy the Thread:: Thread object
  * 若没有通过join回收，则使用detach的方式回收资源
- * 
  */
 Thread::~Thread() {
     if(started_ && !joined_) {
@@ -121,7 +110,6 @@ Thread::~Thread() {
 
 /**
  * @brief 线程对象启动，创建运行的线程
- * 
  */
 void Thread::start() {
     assert(!started_);
@@ -138,8 +126,7 @@ void Thread::start() {
 }
 
 /**
- * @brief 线程对象销毁
- * 
+ * @brief 线程对象主动销毁
  * @return int 
  */
 int Thread::join() {

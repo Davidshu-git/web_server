@@ -10,6 +10,10 @@
 
 namespace web_server {
 
+/**
+ * @brief 由于要访问count_值，若同时被多个线程访问同一个计数锁对象
+ * 产生了竞态，此时是非线程安全的，需要使用锁保护
+ */
 void CountDownLatch::wait() {
     MutexLockGuard lock(mutex_);
     while (count_ > 0) {
@@ -17,6 +21,10 @@ void CountDownLatch::wait() {
     }
 }
 
+/**
+ * @brief 修改count_需要加锁
+ * 若计数为0，通知所有wait线程
+ */
 void CountDownLatch::count_down() {
     MutexLockGuard lock(mutex_);
     --count_;
