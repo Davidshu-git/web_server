@@ -19,6 +19,10 @@ namespace web_server {
 
 namespace net {
 
+/**
+ * @brief poller父类的子类实现
+ * 底层使用的时poll系统函数
+ */
 class PollPoller : public Poller {
 public:
     PollPoller(EventLoop *loop);

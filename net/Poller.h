@@ -22,6 +22,13 @@ namespace net {
 
 class Channel;
 
+/**
+ * @brief poller是抽象基类，使用必须有其子类实现
+ * 定义了一些必须具备的借口，使用时使用该类指针即可调用子类方法
+ * poller要更新channel中的revents信息，其必须要在IO线程中调用
+ * 主要调用的函数时poll函数，传递给其eventloop指针告诉其所属的eventloop对象
+ * 通过该eventloop对象调用assert_in_loop_thread即可判断是否在IO线程之中
+ */
 class Poller : private Noncopyable {
 public:
     using ChannelLists = std::vector<Channel *>;
@@ -41,6 +48,10 @@ public:
     static Poller *new_default_poller(EventLoop *loop);
 protected:
     using ChannelMap = std::map<int, Channel *>;
+    /**
+     * @brief 维护一个channelmap
+     * 存放文件描述符和channel地址的映射信息
+     */
     ChannelMap channels_;
 private:
     EventLoop *owner_loop_;

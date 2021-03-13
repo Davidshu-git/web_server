@@ -29,6 +29,10 @@ class Channel;
 class Poller;
 class TimerQueue;
 
+/**
+ * @brief 创建了EventLoop对象的线程就是IO线程
+ * 
+ */
 class EventLoop : private Noncopyable {
 public:
     using Functor = std::function<void()>;
@@ -47,10 +51,19 @@ public:
         return iteration_;
     }
 
+    /**
+     * @brief 判断当前执行线程是否是event_loop对象线程
+     * 
+     * @return true 
+     * @return false 
+     */
     bool is_in_loop_thread() const {
         return thread_ID_ == current_thread::tid();
     }
 
+    /**
+     * @brief 断言目前执行线程就是EventLoop对象线程
+     */
     void assert_in_loop_thread() {
         if(!is_in_loop_thread()) {
             abort_not_in_loop_thread();
@@ -83,8 +96,7 @@ public:
 
     /**
      * @brief Get the event loop of current thread object
-     * 使用__thread 存储设施存放EventLoop类型指针，指向当前线程中的event loop
-     * 
+     * 使用__thread 存储设施存放EventLoop类型指针，指向当前线程中的event_loop
      * @return EventLoop* 
      */
     static EventLoop *get_event_loop_of_current_thread();

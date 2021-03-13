@@ -24,6 +24,13 @@ PollPoller::PollPoller(EventLoop *loop) : Poller(loop) {}
 
 PollPoller::~PollPoller() = default;
 
+/**
+ * @brief 调用底层poll函数对channel中的revents进行更新
+ * 同时更新了eventloop中的active_channel成员
+ * @param timeout_ms 
+ * @param active_channels 
+ * @return Timestamp 
+ */
 Timestamp PollPoller::poll(int timeout_ms, ChannelLists *active_channels) {
     int num_events = ::poll(&*pollfds_.begin(), pollfds_.size(), timeout_ms);
     int saved_errno = errno;
@@ -62,7 +69,7 @@ void PollPoller::update_channel(Channel *channel) {
     // 若该channel是新的，需要进行添加到channellist和pollfds_
     // 若是已经添加到channellist中的channel，可能不在关注列表pollfds_中，也可能在关注列表
     // 对应处理手段是，不管在不在pollfds_中，都对其进行事件更新，将channel中的信息补充到pollfd中
-    // 若是对于该文件描述符设定为不关心，pfd中的fd设置为- fd - 1
+    // 若是对于该文件描述符设定为不关心，pfd中的fd设置为-fd - 1
     if (channel->index() < 0) {
         assert(channels_.find(channel->fd()) == channels_.end());
         struct pollfd pfd;
@@ -77,7 +84,7 @@ void PollPoller::update_channel(Channel *channel) {
         assert(channels_.find(channel->fd()) != channels_.end());
         assert(channels_[channel->fd()] == channel);
         int idx = channel->index();
-        assert(idx > 0 && idx < static_cast<int>(pollfds_.size()));
+        assert(idx >= 0 && idx < static_cast<int>(pollfds_.size()));
         struct pollfd &pfd = pollfds_[idx];
         assert(pfd.fd == channel->fd() || pfd.fd == -channel->fd()-1);
         pfd.fd = channel->fd();

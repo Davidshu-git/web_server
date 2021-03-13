@@ -24,6 +24,10 @@
 
 using web_server::net::EventLoop;
 
+/**
+ * @brief 使用未命名的命名空间
+ * 具有静态全局意义，但仅在该文件内有效
+ */
 namespace  {
 
 __thread EventLoop *t_loop_in_this_thread = 0;
@@ -49,6 +53,10 @@ EventLoop *EventLoop::get_event_loop_of_current_thread() {
     return t_loop_in_this_thread;
 }
 
+/**
+ * @brief Construct a new Event Loop:: Event Loop object
+ * 保证单一线程中仅有一个EventLoop对象存在
+ */
 EventLoop::EventLoop() 
     : looping_(false),
       quit_(false),
