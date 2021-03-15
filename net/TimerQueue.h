@@ -26,6 +26,9 @@ class EventLoop;
 class Timer;
 class TimerID;
 
+/**
+ * @brief 管理所有定时器
+ */
 class TimerQueue : private Noncopyable {
 public:
     explicit TimerQueue(EventLoop *loop);
@@ -40,13 +43,13 @@ private:
     using ActiveTimer = std::pair<Timer *, int64_t>;
     using ActiveTimerSet = std::set<ActiveTimer>;
 
-    EventLoop *loop_;
-    const int timerfd_;
-    Channel timerfd_channel_;
-    TimerList timers_;
-    ActiveTimerSet active_timers_;
-    bool calling_expired_timers_;
-    ActiveTimerSet canceling_timers_;
+    EventLoop *loop_;                                   // 指向所属的eventloop
+    const int timerfd_;                                 // timerfd
+    Channel timerfd_channel_;                           // timerfd对应的channel，管理其回调事件
+    TimerList timers_;                                  // timer的序列底层使用set保存
+    ActiveTimerSet active_timers_;                      // 活跃timer序列，底层也是set
+    bool calling_expired_timers_;                       // 表示正在调用过期timer
+    ActiveTimerSet canceling_timers_;                   // 表示已经过期的timer
 
     void add_timer_in_loop(Timer *timer);
     void cancel_in_loop(TimerID timer_ID);

@@ -120,8 +120,8 @@ private:
     Timestamp poll_return_time_;
     std::unique_ptr<Poller> poller_;
     std::unique_ptr<TimerQueue> timer_queue_;
-    int wakeup_fd_;
-    std::unique_ptr<Channel> wakeup_channel_;
+    int wakeup_fd_;                                 // 负责唤醒IO线程工作
+    std::unique_ptr<Channel> wakeup_channel_;       // 管理唤醒IO线程后的执行回调
     //add boost any
 
     // manage channel

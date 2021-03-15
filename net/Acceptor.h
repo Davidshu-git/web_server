@@ -22,6 +22,10 @@ namespace net {
 class EventLoop;
 class InetAddress;
 
+/**
+ * @brief 负责监听socketfd上的accept请求
+ * 
+ */
 class Acceptor : private Noncopyable {
 public:
     using NewConnectionCallback = std::function<void (int sockfd, const InetAddress &)>;

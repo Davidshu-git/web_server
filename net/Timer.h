@@ -46,13 +46,13 @@ public:
         return s_num_created_.get();
     }
 private:
-    const TimerCallback callback_;
-    Timestamp expiration_;
-    const double interval_;
-    const bool repeat_;
-    const int64_t sequence_;
+    const TimerCallback callback_;          // 定时器回调函数
+    Timestamp expiration_;                  // 到期时间
+    const double interval_;                 // 循环时间段
+    const bool repeat_;                     // 是否重复触发
+    const int64_t sequence_;                // 序列值
 
-    static AtomicInt64 s_num_created_;
+    static AtomicInt64 s_num_created_;      // 静态变量存放创建timer对象的数量
 };
 
 } // namespace net

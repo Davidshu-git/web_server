@@ -40,6 +40,10 @@ Acceptor::~Acceptor() {
     ::close(idle_fd_);
 }
 
+/**
+ * @brief 负责创建TCP服务端步骤
+ * 在IO线程中执行
+ */
 void Acceptor::listen() {
     loop_->assert_in_loop_thread();
     listening_ = true;
@@ -47,10 +51,14 @@ void Acceptor::listen() {
     accept_channel_.enable_reading();
 }
 
+/**
+ * @brief 当检测到sockfd上的读事件时需要执行的回调函数
+ * 需要在IO线程中执行
+ */
 void Acceptor:: handle_read() {
     loop_->assert_in_loop_thread();
     InetAddress peer_addr;
-    int connd = accept_socket_.accept(& peer_addr);
+    int connd = accept_socket_.accept(&peer_addr);
     if (connd > 0) {
         if (new_connection_callback_) {
             new_connection_callback_(connd, peer_addr);

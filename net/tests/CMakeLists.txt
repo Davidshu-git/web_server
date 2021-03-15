@@ -12,3 +12,6 @@ add_test(NAME buffer_unittest COMMAND buffer_unittest)
 
 add_executable(eventloopthread_unittest EventLoopThread_unittest.cc)
 target_link_libraries(eventloopthread_unittest net_lib)
+
+add_executable(acceptor_unittest Acceptor_unittest.cc)
+target_link_libraries(acceptor_unittest net_lib)

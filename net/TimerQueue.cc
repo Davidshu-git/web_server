@@ -45,6 +45,12 @@ struct timespec how_much_time_from_now(Timestamp when) {
     return ts;
 }
 
+/**
+ * @brief 重设timerfd的触发时间
+ * 
+ * @param timerfd 
+ * @param expiration 
+ */
 void reset_timerfd(int timerfd, Timestamp expiration) {
     struct itimerspec new_value;
     struct itimerspec old_value;
@@ -57,6 +63,13 @@ void reset_timerfd(int timerfd, Timestamp expiration) {
     }
 }
 
+/**
+ * @brief timerfd触发了一个读事件
+ * 那么要将这个读数据取出，不然若是使用的poll则是level触发模式
+ * 则会一直触发这个事件而不会计时
+ * @param timerfd 
+ * @param now 
+ */
 void read_timerfd(int timerfd, Timestamp now) {
     uint64_t how_many;
     ssize_t n = ::read(timerfd, &how_many, sizeof how_many);
@@ -87,16 +100,37 @@ TimerQueue::~TimerQueue() {
     }
 }
 
+/**
+ * @brief 为了实现在其他线程也可调用add_timer
+ * 不使用锁机制的情况下，调用run_in_loop即可
+ * add_timer_in_loop实际负责add动作
+ * 本函数只负责将这个请求进行转发
+ * @param cb 
+ * @param when 
+ * @param interval 
+ * @return TimerID 序列值实际上就是创建的第多少个timer
+ */
 TimerID TimerQueue::add_timer(TimerCallback cb, Timestamp when, double interval) {
     Timer *timer = new Timer(cb, when, interval);
     loop_->run_in_loop(std::bind(&TimerQueue::add_timer_in_loop, this, timer));
     return TimerID(timer, timer->sequence());
 }
 
+/**
+ * @brief 将一个timer进行取消操作
+ * 该函数不需要运行在io线程，因为进行的是转发取消操作
+ * 将操作转发给IO线程
+ * @param timer_ID 
+ */
 void TimerQueue::cancel(TimerID timer_ID) {
     loop_->run_in_loop(std::bind(&TimerQueue::cancel_in_loop, this, timer_ID));
 }
 
+/**
+ * @brief 该函数必须在IO线程中执行
+ * 若是最早执行的一个timer，那么直接进行timerfd设置
+ * @param timer 
+ */
 void TimerQueue::add_timer_in_loop(Timer *timer) {
     loop_->assert_in_loop_thread();
     bool earliest_changed = insert(timer);
@@ -105,6 +139,11 @@ void TimerQueue::add_timer_in_loop(Timer *timer) {
     }
 }
 
+/**
+ * @brief 真正执行cancel操作的函数
+ * 
+ * @param timer_ID 
+ */
 void TimerQueue::cancel_in_loop(TimerID timer_ID) {
     loop_->assert_in_loop_thread();
     assert(timers_.size() == active_timers_.size());
@@ -121,6 +160,12 @@ void TimerQueue::cancel_in_loop(TimerID timer_ID) {
     assert(timers_.size() == active_timers_.size());
 }
 
+/**
+ * @brief timerqueue自己的timerfd到期后执行的函数
+ * 到期后就会触发读事件，涉及到对类成员变量的修改
+ * 若不加锁，则需要在IO线程中执行
+ * 在该函数中执行所有到期的定时器回调函数
+ */
 void TimerQueue::handle_read() {
     loop_->assert_in_loop_thread();
     Timestamp now(Timestamp::now());
@@ -135,12 +180,20 @@ void TimerQueue::handle_read() {
     }
     calling_expired_timers_ = false;
     reset(expired, now);
-    
 }
 
+/**
+ * @brief 移除已经到期的timer，并以vector形式返回这些到期timer
+ * @param now 
+ * @return std::vector<TimerQueue::Entry> 
+ */
 std::vector<TimerQueue::Entry> TimerQueue::get_expired(Timestamp now) {
     assert(timers_.size() == active_timers_.size());
     std::vector<Entry> expired;
+    // 由于第二个参数设置的是最大值，理论上找到的end是大于等于这个最大值的
+    // 但是这个最大值是不可能取到的，所有相同now值的成员都会小于这个最大值
+    // 所以找到的值一定满足*end >= sentry > now值对应成员
+    // 则end->first > now
     Entry sentry(now, reinterpret_cast<Timer*>(UINTPTR_MAX));
     auto end = timers_.lower_bound(sentry);
     assert(end == timers_.end() || now < end->first);
@@ -157,6 +210,13 @@ std::vector<TimerQueue::Entry> TimerQueue::get_expired(Timestamp now) {
     return expired;
 }
 
+/**
+ * @brief 若是存在可重复timer则进行重复设置
+ * 若是该timer不可重复，那么直接进行资源释放
+ * 若没有后续的timer了，则要设置timerqueue的timerfd为无效
+ * @param expired 
+ * @param now 
+ */
 void TimerQueue::reset(const std::vector<Entry> &expired, Timestamp now) {
     Timestamp next_expire;
     for (const Entry &it :expired) {
@@ -179,6 +239,13 @@ void TimerQueue::reset(const std::vector<Entry> &expired, Timestamp now) {
     }
 }
 
+/**
+ * @brief 该函数必须在IO线程中执行
+ * 记录这个timer是不是最早执行的一个
+ * @param timer 
+ * @return true 
+ * @return false 
+ */
 bool TimerQueue::insert(Timer *timer) {
     loop_->assert_in_loop_thread();
     assert(timers_.size() == active_timers_.size());

@@ -32,6 +32,11 @@ EventLoopThread::~EventLoopThread() {
     }
 }
 
+/**
+ * @brief 真正执行thread创建工作
+ * 获取创建后端eventloo指针，需要是要条件变量机制等待
+ * @return EventLoop* 
+ */
 EventLoop *EventLoopThread::start_loop() {
     assert(!thread_.started());
     thread_.start();
@@ -47,6 +52,12 @@ EventLoop *EventLoopThread::start_loop() {
     return loop;
 }
 
+/**
+ * @brief 执行创建eventloop工作
+ * 执行callback_
+ * 若是创建成功，通过条件变量通知创建线程，这个线程创建好了
+ * 通知其取eventloop的指针值
+ */
 void EventLoopThread::thread_func() {
     EventLoop loop;
     if (callback_) {

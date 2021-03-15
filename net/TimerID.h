@@ -19,6 +19,10 @@ namespace net {
 
 class Timer;
 
+/**
+ * @brief 创建带序列号的timer
+ * 对timer进行了封装，管理timer指针和序列号
+ */
 class TimerID : public Copyable {
     friend class TimerQueue;
 public:
