@@ -21,6 +21,10 @@ namespace http {
 
 using web_server::net::Buffer;
 
+/**
+ * @brief 负责管理http响应报文中的信息
+ * 
+ */
 class HttpResponse : public Copyable {
 public:
     enum HttpStatusCode {
@@ -63,15 +67,20 @@ public:
     void set_body(const std::string &body) {
         body_ = body;
     }
-
+    
+    /**
+     * @brief 将响应报文数据存放到buffer中
+     * 
+     * @param output 
+     */
     void append_to_buffer(Buffer *output) const;
     
 private:
-    std::map<std::string, std::string> headers_;
-    HttpStatusCode status_code_;
-    std::string status_message_;
-    bool close_connection_;
-    std::string body_;
+    std::map<std::string, std::string> headers_;    // 存放响应首部字段
+    HttpStatusCode status_code_;                    // 存放状态码
+    std::string status_message_;                    // 存放状态信息
+    bool close_connection_;                         // 是否设置Connection字段为close
+    std::string body_;                              // 存放响应体
 };
 
 } // namespace http

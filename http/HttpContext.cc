@@ -14,6 +14,14 @@ namespace web_server {
 
 namespace http {
 
+/**
+ * @brief 整体进行request解析
+ * 
+ * @param buf 
+ * @param receive_time 
+ * @return true 
+ * @return false 
+ */
 bool HttpContext::parse_request(Buffer *buf, Timestamp receive_time) {
     bool is_ok = true;
     bool has_more = true;
@@ -22,7 +30,7 @@ bool HttpContext::parse_request(Buffer *buf, Timestamp receive_time) {
             // 解析请求行
             const char *crlf = buf->find_CRLF(); // 查找"r\n"
             if (crlf) {
-                // 查找成功，当前请求行完整
+                // 查找成功，当前请求行完整，进行请求行解析
                 is_ok = process_request_line(buf->peek(), crlf);
                 if (is_ok) {
                     // 行解析成功
@@ -40,13 +48,13 @@ bool HttpContext::parse_request(Buffer *buf, Timestamp receive_time) {
                 has_more = false;
             }
         } else if (state_ == k_expect_headers) {
-            // 解析请求头
-            const char *crlf = buf->find_CRLF(); // 查找"r\n"
+            // 解析请求头 查找"r\n"
+            const char *crlf = buf->find_CRLF();
             if (crlf) {
-                // 查找成功，当前有一行完整的数据
-                const char *colon = std::find(buf->peek(), crlf, ':'); // 查找":"
+                // 查找成功，当前有一行完整的数据 查找":"
+                const char *colon = std::find(buf->peek(), crlf, ':');
                 if (colon != crlf) {
-                    request_.addHeader(buf->peek(), colon, crlf);
+                    request_.add_header(buf->peek(), colon, crlf);
                 } else {
                     // 空行（"r\n"），请求头结束
                     state_ = k_got_all;
@@ -59,11 +67,21 @@ bool HttpContext::parse_request(Buffer *buf, Timestamp receive_time) {
             }
         } else if (state_ == k_expect_body) {
             // TODO
+        } else {
+            // TODO
         }
     }
     return is_ok;
 }
 
+/**
+ * @brief 针对行进行解析
+ * 解析请求方法，设置request内容，解析路径、query、协议版本，都存放到request中
+ * @param start 
+ * @param end 
+ * @return true 
+ * @return false 
+ */
 bool HttpContext::process_request_line(const char *start, const char *end) {
     bool is_succeed = false;
     // 请求方法 路径 HTTP/版本
@@ -73,6 +91,7 @@ bool HttpContext::process_request_line(const char *start, const char *end) {
         space = std::find(start, end, ' ');
         if (space != end) {
             const char *question = std::find(start, space, '?');
+            // 判断是否存在query部分，URI中以？作为分割
             if (question != space) {
                 request_.set_path(start, question);
                 request_.set_query(question, space);

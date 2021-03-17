@@ -70,7 +70,7 @@ void HttpServer::on_message(const TcpConnectionPtr &conn,
 
 void HttpServer::on_request(const TcpConnectionPtr & conn,
                             const HttpRequest &req) {
-    const std::string &connection = req.getHeader("Connection");
+    const std::string &connection = req.get_header("Connection");
     bool close = connection == "close" ||
         (req.get_version() == HttpRequest::k_http10 && connection != "Keep-Alive");
     HttpResponse response(close);

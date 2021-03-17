@@ -21,13 +21,17 @@ namespace web_server {
 
 namespace http {
 
+/**
+ * @brief 用于保存请求相关的信息
+ * 包含：请求方法、请求路径、查询字段、接收请求时间、请求头
+ * 协议版本
+ */
 class HttpRequest : public Copyable {
 public:
     enum Method {k_invalid, k_get, k_post, k_head, k_put, k_delete};
     enum Version {k_unknown, k_http10, k_http11};
 
-    HttpRequest() : method_(k_invalid), version_(k_unknown) {
-    }
+    HttpRequest() : method_(k_invalid), version_(k_unknown) {}
 
     void set_version(Version v) {
         version_ = v;
@@ -37,6 +41,14 @@ public:
         return version_;
     }
 
+    /**
+     * @brief Set the method object
+     * 指针遵循左闭右开原则
+     * @param start 
+     * @param end 
+     * @return true 
+     * @return false 
+     */
     bool set_method(const char *start, const char *end) {
         assert(method_ == k_invalid);
         std::string m(start, end);
@@ -108,7 +120,15 @@ public:
         return receive_time_;
     }
 
-    void addHeader(const char *start, const char *colon, const char *end) {
+    /**
+     * @brief 根据设定好的request对象添加请求头
+     * 请求头即为请求的首部字段，是部分可选的
+     * @param start 
+     * @param colon 
+     * @param end 
+     */
+    void add_header(const char *start, const char *colon, const char *end) {
+        // 请求字段中名称
         std::string field(start, colon);
         ++colon;
 
@@ -124,7 +144,13 @@ public:
         headers_[field] = value;
     }
 
-    std::string getHeader(const std::string &field) const {
+    /**
+     * @brief Get the header object
+     * 根据提供的field值查询请求字段的内容
+     * @param field 
+     * @return std::string 
+     */
+    std::string get_header(const std::string &field) const {
         std::string value;
         auto it = headers_.find(field);
         if (it != headers_.end()) {
@@ -146,12 +172,12 @@ public:
         headers_.swap(that.headers_);
     }
 private:
-    Method method_;
-    Version version_;
-    std::string path_;
-    std::string query_;
-    Timestamp receive_time_;
-    std::map<std::string, std::string> headers_;
+    Method method_;                                 // 存放方法
+    Version version_;                               // 存放版本
+    std::string path_;                              // 存放URI路径
+    std::string query_;                             // 存放query字段
+    Timestamp receive_time_;                        // 存放时间
+    std::map<std::string, std::string> headers_;    // 存放请求首部字段
 };
 
 } // namespace http

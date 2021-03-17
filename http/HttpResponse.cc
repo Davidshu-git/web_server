@@ -13,8 +13,6 @@ namespace web_server {
 namespace http {
 
 void HttpResponse::append_to_buffer(Buffer *output) const {
-    // std::string buf = "HTTP/1.1 %d ";
-    // buf += std::to_string(status_code_);
     char buf[32];
     snprintf(buf, sizeof(buf), "HTTP/1.1 %d ", status_code_);
     output->append(buf);
