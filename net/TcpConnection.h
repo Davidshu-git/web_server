@@ -30,6 +30,10 @@ class Channel;
 class EventLoop;
 class Socket;
 
+/**
+ * @brief 表示一个已建立的tcp连接
+ * 
+ */
 class TcpConnection : private Noncopyable,
                       public std::enable_shared_from_this<TcpConnection> {
 public:
@@ -59,7 +63,7 @@ public:
         return state_ == kDisconnected;
     }
     // bool get_tcp_info(struct tcp_info *) const;
-    // std::string get_tcp_info_string() const;
+    std::string get_tcp_info_string() const;
 
     void send(const void *message, size_t len);
     void send(const std::string &message);
@@ -100,7 +104,7 @@ private:
     void handle_error();
     
     void send_in_loop(const std::string &message);
-    void shut_down_in_loop();
+    void shutdown_in_loop();
 
     void set_state(StateE s) {
         state_ = s;

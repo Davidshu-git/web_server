@@ -19,6 +19,14 @@ namespace web_server {
 
 namespace net {
 
+/**
+ * @brief Construct a new Tcp Server:: Tcp Server object
+ * 使用acceptor获得连接，设置acceptor获得连接时执行的回调函数
+ * @param loop 
+ * @param listen_addr 
+ * @param name 
+ * @param option 
+ */
 TcpServer::TcpServer(EventLoop *loop, const InetAddress &listen_addr,
                      const std::string &name, Option option)
     : loop_(loop),
@@ -64,7 +72,7 @@ void TcpServer::new_connection(int sockfd, const InetAddress &peer_addr) {
     ++next_conn_ID_;
     std::string conn_name = name_ + buf;
 
-    LOG_INFO << "TcpServer::newConnection [" << name_
+    LOG_INFO << "TcpServer::new_connection [" << name_
              << "] - new connection [" << conn_name
              << "] from " << peer_addr.to_IP_port();
 

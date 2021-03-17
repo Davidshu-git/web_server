@@ -20,6 +20,13 @@ const char Buffer::k_CRLF[] = "\r\n";
 const size_t Buffer::k_cheap_prepend;
 const size_t Buffer::k_initial_size;
 
+/**
+ * @brief 
+ * 
+ * @param fd 
+ * @param saved_errno 
+ * @return ssize_t 
+ */
 ssize_t Buffer::read_fd(int fd, int *saved_errno) {
     char extra_buf[65536];
     struct iovec vec[2];

@@ -63,6 +63,12 @@ std::string InetAddress::to_IP_port() const {
     return buf;
 }
 
+/**
+ * @brief 获取本地sockfd绑定的监听地址
+ * 
+ * @param sockfd 
+ * @return sockaddr_in 
+ */
 sockaddr_in InetAddress::get_local_addr(int sockfd) {
     sockaddr_in local_addr;
     socklen_t addr_len = sizeof(local_addr);
@@ -72,6 +78,12 @@ sockaddr_in InetAddress::get_local_addr(int sockfd) {
     return local_addr;
 }
 
+/**
+ * @brief 获取连接端的地址
+ * 
+ * @param sockfd 
+ * @return sockaddr_in 
+ */
 sockaddr_in InetAddress::get_peer_addr(int sockfd) {
     sockaddr_in peer_addr;
     socklen_t addr_len = sizeof(peer_addr);

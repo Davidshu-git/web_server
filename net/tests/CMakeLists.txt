@@ -15,3 +15,9 @@ target_link_libraries(eventloopthread_unittest net_lib)
 
 add_executable(acceptor_unittest Acceptor_unittest.cc)
 target_link_libraries(acceptor_unittest net_lib)
+
+add_executable(tcpserver_unittest Tcpserver_unittest.cc)
+target_link_libraries(tcpserver_unittest net_lib)
+
+add_executable(echoserver_unittest Echoserver_unittest.cc)
+target_link_libraries(echoserver_unittest net_lib)

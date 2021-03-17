@@ -29,6 +29,10 @@ class Acceptor;
 class EventLoop;
 class EventLoopThreadPool;
 
+/**
+ * @brief 管理tcpconnection对象
+ * 
+ */
 class TcpServer : private Noncopyable {
 public:
     using ThreadInitCallback = std::function<void(EventLoop *)>;

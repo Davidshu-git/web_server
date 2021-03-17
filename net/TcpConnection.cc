@@ -61,6 +61,13 @@ TcpConnection::~TcpConnection() {
     assert(state_ == kDisconnected);
 }
 
+std::string TcpConnection::get_tcp_info_string() const {
+    char buf[1024];
+    buf[0] = '\0';
+    socket_->get_tcp_info_string(buf, sizeof buf);
+    return buf;
+}
+
 void TcpConnection::send(const std::string &message) {
     if (state_ == kConnected) {
         if (loop_->is_in_loop_thread()) {
@@ -80,7 +87,7 @@ void TcpConnection::send(const void *message, size_t len) {
 void TcpConnection::shutdown() {
     if (state_ == kConnected) {
         set_state(kDisconnecting);
-        loop_->run_in_loop(std::bind(&TcpConnection::shut_down_in_loop, shared_from_this()));
+        loop_->run_in_loop(std::bind(&TcpConnection::shutdown_in_loop, shared_from_this()));
     }
 }
 
@@ -136,7 +143,7 @@ void TcpConnection::handle_write() {
                     loop_->queue_in_loop(std::bind(write_complete_callback_, shared_from_this()));
                 }
                 if (state_ == kDisconnecting) {
-                    shut_down_in_loop();
+                    shutdown_in_loop();
                 }
             }
         } else {
@@ -158,6 +165,7 @@ void TcpConnection::handle_close() {
     connection_callback_(guard_this);
     close_callback_(guard_this);
 }
+
 void TcpConnection::handle_error(){
     int err = sockets::get_socket_error(channel_->fd());
     LOG_ERROR << "TcpConnection::handle_error [" << name_
@@ -194,7 +202,7 @@ void TcpConnection::send_in_loop(const std::string &message){
     }
 }
 
-void TcpConnection::shut_down_in_loop() {
+void TcpConnection::shutdown_in_loop() {
     loop_->assert_in_loop_thread();
     if (!channel_->is_writing()) {
         socket_->shutdown_write();
