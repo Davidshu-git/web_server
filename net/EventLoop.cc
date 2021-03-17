@@ -11,6 +11,7 @@
 #include <sys/eventfd.h>
 #include <cstdlib>
 #include <unistd.h>
+#include <signal.h>
 
 #include <cassert>
 #include <vector>
@@ -42,6 +43,20 @@ int create_event_fd() {
     }
     return event_fd;
 }
+
+/**
+ * @brief 防止服务进程来不及处理断开进程仍然发送数据的情况
+ * 此时会触发SIGPIPE，导致服务端程序意外退出
+ * 全局初始化忽略该信号即可
+ */
+class IgnoreSigpipe {
+public:
+    IgnoreSigpipe() {
+        ::signal(SIGPIPE, SIG_IGN);
+    }
+};
+
+IgnoreSigpipe initObj;
 
 } // namespace 
 

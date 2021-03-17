@@ -153,6 +153,10 @@ public:
         writer_index_ -= len;
     }
 
+    void append(const std::string &str) {
+        append(str.data(), str.size());
+    }
+    
     void append(const char *data, size_t len) {
         ensure_writable_bytes(len);
         std::copy(data, data + len, begin_write());
@@ -269,6 +273,10 @@ public:
     }
 
     ssize_t read_fd(int fd, int *saved_errno);
+
+    std::string to_string() {
+        return std::string(peek(), readable_bytes());
+    }
 
 private:
     std::vector<char> buffer_;

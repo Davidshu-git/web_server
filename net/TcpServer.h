@@ -55,6 +55,13 @@ public:
         return loop_;
     }
 
+    /**
+     * @brief Set the thread num object
+     * 若为0则表示不新建任何IO线程，在当前进程中处理所有IO
+     * 若为1则表示在另外一个线程中处理新的连接
+     * 若为N表示一个N线程的线程池被创建，在线程池中使用round-robin的方式选择线程进行连接处理
+     * @param num_threads 
+     */
     void set_thread_num(int num_threads);
     void set_thread_init_callback(const ThreadInitCallback &cb) {
         thread_init_callback_ = cb;

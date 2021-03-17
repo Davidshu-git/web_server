@@ -68,6 +68,7 @@ public:
     void send(const void *message, size_t len);
     void send(const std::string &message);
     void shutdown();
+    // 设置禁用Nagle算法
     void set_tcp_no_delay(bool on);
     void set_context(const boost::any &context) {
         context_ = context;
@@ -75,7 +76,7 @@ public:
     const boost::any &get_context() const {
         return context_;
     }
-    const boost::any *get_mutable_context() {
+    boost::any *get_mutable_context() {
         return &context_;
     }
     void set_connection_callback(const ConnectionCallback &cb) {

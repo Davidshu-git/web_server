@@ -23,6 +23,10 @@ namespace net {
 class EventLoop;
 class EventLoopThread;
 
+/**
+ * @brief 管理eventloop线程对象的线程池
+ * 
+ */
 class EventLoopThreadPool : private Noncopyable {
 public:
     using ThreadInitCallback = std::function<void(EventLoop *)>;

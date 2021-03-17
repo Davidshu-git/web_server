@@ -53,7 +53,7 @@ EPollPoller::~EPollPoller() {
 
 Timestamp EPollPoller::poll(int timeout_ms, ChannelLists *active_channels) {
     LOG_TRACE << "fd total count " << channels_.size();
-    int num_events = ::epoll_wait(epollfd_,&*events_.begin(), static_cast<int>(events_.size()), timeout_ms);
+    int num_events = ::epoll_wait(epollfd_, &*events_.begin(), static_cast<int>(events_.size()), timeout_ms);
     int saved_errno = errno;
     Timestamp now(Timestamp::now());
     if (num_events > 0) {

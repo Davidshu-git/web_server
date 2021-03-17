@@ -21,3 +21,6 @@ target_link_libraries(tcpserver_unittest net_lib)
 
 add_executable(echoserver_unittest Echoserver_unittest.cc)
 target_link_libraries(echoserver_unittest net_lib)
+
+add_executable(connector_unittest Connector_unittest.cc)
+target_link_libraries(connector_unittest net_lib)

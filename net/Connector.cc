@@ -24,6 +24,9 @@ namespace web_server {
 
 namespace net {
 
+const int Connector::k_max_retry_delay_ms;
+const int Connector::k_init_retry_delay_ms;
+
 Connector::Connector(EventLoop *loop, const InetAddress &server_addr)
     : loop_(loop),
       server_addr_(server_addr),
@@ -78,12 +81,12 @@ void Connector::stop_in_loop() {
 void Connector::connect() {
     int sockfd = ::socket(AF_INET, SOCK_STREAM | SOCK_NONBLOCK | SOCK_CLOEXEC, IPPROTO_TCP);
     if (sockfd < 0) {
-        LOG_SYSFATAL << "Connect::connect";
+        LOG_SYSFATAL << "Connector::connect";
     }
     sockaddr_in addr = server_addr_.get_sock_addr();
     int ret = ::connect(sockfd,
-                           reinterpret_cast<sockaddr *>(&addr),
-                           static_cast<socklen_t>(sizeof(struct sockaddr_in6)));
+                        reinterpret_cast<sockaddr *>(&addr),
+                        static_cast<socklen_t>(sizeof(struct sockaddr_in6)));
     int saved_errno = (ret == 0) ? 0 : errno;
     switch (saved_errno) {
     case 0:

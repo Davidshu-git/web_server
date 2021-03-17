@@ -27,6 +27,7 @@ public:
     Timestamp poll(int timeout_ms, ChannelLists *active_channels) override;
     void update_channel(Channel *channel) override;
     void remove_channel(Channel *channel) override;
+    
 private:
     static const int k_init_event_list_size = 16;
 

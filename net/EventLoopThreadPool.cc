@@ -46,6 +46,11 @@ void EventLoopThreadPool::start(const ThreadInitCallback &cb) {
     }
 }
 
+/**
+ * @brief 每次新建一个tcpconnection都会调用该函数获得一个loop来管理这个tcpconnection
+ * 若loops_为空，则使用的是base_loop，若不为空，则轮流使用loops_中的loop
+ * @return EventLoop* 
+ */
 EventLoop *EventLoopThreadPool::get_next_loop() {
     base_loop_->assert_in_loop_thread();
     assert(started_);

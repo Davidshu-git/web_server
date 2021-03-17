@@ -16,6 +16,7 @@ include_directories("${PROJECT_SOURCE_DIR}")
 # 添加子目录
 add_subdirectory(base)
 add_subdirectory(net)
+add_subdirectory(http)
 
 add_executable(main main.cc)
 

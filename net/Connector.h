@@ -23,17 +23,22 @@ class Channel;
 class EventLoop;
 
 class Connector : private Noncopyable,
-                  public  std::enable_shared_from_this<Connector> {
+                  public std::enable_shared_from_this<Connector> {
 public:
-    using NewConnectionCallback = std::function<void (int sockfd)>;
+    using NewConnectionCallback = std::function<void(int sockfd)>;
     Connector(EventLoop *loop, const InetAddress &server_addr);
     ~Connector();
 
     void set_new_connection_callback(const NewConnectionCallback &cb) {
         new_connection_callback_ = cb;
     }
+    // call in any thread
     void start();
+
+    // call in loop thread
     void restart();
+
+    // call in any thread
     void stop();
     const InetAddress &server_address() const {
         return server_addr_;
