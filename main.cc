@@ -35,18 +35,22 @@ void on_request(const HttpRequest &req, HttpResponse *resp) {
         resp->set_body("<html><head><title>This is title</title></head>"
                        "<body><h1>Hello</h1>Now is " + now +
                        "</body></html>");
+    } else if (req.path() == "/hello") {
+        resp->set_status_code(HttpResponse::k_200_ok);
+        resp->set_status_message("OK");
+        resp->set_content_type("text/plain");
+        resp->set_body("hello, world!\n");
     } else {
         resp->set_status_code(HttpResponse::k_404_not_found);
         resp->set_status_message("Not Found");
         resp->set_close_connection(true);
     }
-
 }
 
 int main(int argc, char *argv[]) {
     int num_threads = 0;
     if (argc > 1) {
-        Logger::set_log_level(Logger::WARN);
+        Logger::set_log_level(Logger::ERROR);
         num_threads = atoi(argv[1]);
     }
     EventLoop loop;
