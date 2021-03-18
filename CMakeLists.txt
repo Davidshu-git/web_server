@@ -19,6 +19,7 @@ add_subdirectory(net)
 add_subdirectory(http)
 
 add_executable(main main.cc)
+target_link_libraries(main http_lib)
 
 
 

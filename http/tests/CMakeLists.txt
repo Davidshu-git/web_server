@@ -1,0 +1,6 @@
+add_executable(httprequest_unittest HttpRequest_unittest.cc)
+target_link_libraries(httprequest_unittest http_lib)
+add_test(NAME httprequest_unittest COMMAND httprequest_unittest)
+
+add_executable(httpserver_unittest HttpServer_unittest.cc)
+target_link_libraries(httpserver_unittest http_lib)

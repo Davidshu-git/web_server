@@ -20,7 +20,7 @@ namespace http {
 using web_server::net::Buffer;
 
 /**
- * @brief 负责解析http文本的工作
+ * @brief 负责解析http请求的工作
  * 
  */
 class HttpContext : public Copyable {

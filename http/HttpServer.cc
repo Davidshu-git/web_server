@@ -46,6 +46,11 @@ void HttpServer::start() {
     server_.start();
 }
 
+/**
+ * @brief 连接时回调
+ * 
+ * @param conn 
+ */
 void HttpServer::on_connetion(const TcpConnectionPtr &conn) {
     if (conn->connected()) {
         conn->set_context(HttpContext());
