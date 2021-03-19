@@ -55,6 +55,11 @@
         "set": "cpp",
         "cinttypes": "cpp",
         "typeindex": "cpp",
-        "variant": "cpp"
+        "variant": "cpp",
+        "buffer": "cpp",
+        "internet": "cpp",
+        "io_context": "cpp",
+        "socket": "cpp",
+        "ratio": "cpp"
     }
 }

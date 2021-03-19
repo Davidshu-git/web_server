@@ -29,16 +29,16 @@ public:
     void remove_channel(Channel *channel) override;
     
 private:
+    using EventList = std::vector<struct epoll_event>;
+    int epollfd_;
+    EventList events_;
+
     static const int k_init_event_list_size = 16;
 
     static const char *operation_to_string(int op);
 
     void fill_active_channels(int num_events, ChannelLists *active_channels) const;
     void update(int operation, Channel *channel);
-
-    using EventList = std::vector<struct epoll_event>;
-    int epollfd_;
-    EventList events_;
 };
 
 } // namespace net
