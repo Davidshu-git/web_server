@@ -24,7 +24,6 @@
 main函数中，创建一个EventLoop对象作为base_loop，server类中创建一个EventLoop线程池对象，若线程数设置为0，则线程池中并未创建新的EventLoop，若线程数设置为大于0，则创建了一个线程池，其中每个线程存在一个EventLoop对象，在base_loop中进行listen，通过acceptor的listen获得新的连接，每次获得新连接，就从EventLoop线程池以round-robin方式取一个loop出来，创建一个TcpConnection由这个loop进行管理，每个TcpConnection保存了处理连接的回调函数和处理消息的回调函数，在每个loop线程中进行处理
 # http解析类
 为了做性能测试，实现了一个简单的http解析类，解析http请求头，使用HttpRequest类管理这些信息，并构建HttpResponse类，存放响应报文数据
-![使用线程池](https://static.code-david.cn/blog/webbench_test_4.png)
 # 代码量分析
 ![代码量分析](https://static.code-david.cn/blog/web_server代码分析.png)
 # 性能测试
@@ -32,4 +31,4 @@ main函数中，创建一个EventLoop对象作为base_loop，server类中创建�
 - 不使用线程池：
 ![单线程测试](https://static.code-david.cn/blog/webbench_test.png)
 - 线程池=4
-![使用线程池](https://static.code-david.cn/blog/webbench_test_4.png)
+![使用线程池](https://static.code-david.cn/blog/webbench_线程池.png)
