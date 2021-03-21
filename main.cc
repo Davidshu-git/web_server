@@ -48,7 +48,7 @@ void on_request(const HttpRequest &req, HttpResponse *resp) {
 }
 
 int main(int argc, char *argv[]) {
-    int num_threads = 4;
+    int num_threads = 0;
     if (argc > 1) {
         Logger::set_log_level(Logger::ERROR);
         num_threads = atoi(argv[1]);
