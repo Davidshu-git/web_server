@@ -32,4 +32,3 @@ main函数中，创建一个EventLoop对象作为base_loop，server类中创建�
 ![单线程测试](https://static.code-david.cn/blog/webbench_test.png)
 - 线程池=4
 ![使用线程池](https://static.code-david.cn/blog/webbench_test_4.png)
-在使用线程池的情况下，并发连接数增加了
