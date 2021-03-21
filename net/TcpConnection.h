@@ -32,7 +32,8 @@ class Socket;
 
 /**
  * @brief 表示一个已建立的tcp连接
- * 
+ * 一个连接由这样的几部分组成：一对地址、名称、所属loop、sockfd
+ * 该连接对象要负责管理回调：连接回调、消息回调、写完成回调、高水位回调、关闭回调
  */
 class TcpConnection : private Noncopyable,
                       public std::enable_shared_from_this<TcpConnection> {
@@ -62,22 +63,23 @@ public:
     bool disconnected() const {
         return state_ == kDisconnected;
     }
-    // bool get_tcp_info(struct tcp_info *) const;
-    std::string get_tcp_info_string() const;
-
-    void send(const void *message, size_t len);
-    void send(const std::string &message);
-    void shutdown();
-    // 设置禁用Nagle算法
-    void set_tcp_no_delay(bool on);
-    void set_context(const boost::any &context) {
-        context_ = context;
-    }
     const boost::any &get_context() const {
         return context_;
     }
     boost::any *get_mutable_context() {
         return &context_;
+    }
+    std::string get_tcp_info_string() const;
+    
+    void send(const void *message, size_t len);
+    void send(const std::string &message);
+    void shutdown();
+    void connection_established();
+    void connection_destroyed();
+    // 设置禁用Nagle算法
+    void set_tcp_no_delay(bool on);
+    void set_context(const boost::any &context) {
+        context_ = context;
     }
     void set_connection_callback(const ConnectionCallback &cb) {
         connection_callback_ = cb;
@@ -95,8 +97,6 @@ public:
     void set_close_callback(const CloseCallback &cb) {
         close_callback_ = cb;
     }
-    void connection_established();
-    void connection_destroyed();
 private:
     enum StateE {kDisconnected, kConnecting, kConnected, kDisconnecting};
     void handle_read(Timestamp receive_time);
@@ -115,9 +115,9 @@ private:
 
     EventLoop *loop_;
     const std::string name_;
-    StateE state_;
-    std::unique_ptr<Socket> socket_;
-    std::unique_ptr<Channel> channel_;
+    StateE state_;                                      // 存储该连接状态
+    std::unique_ptr<Socket> socket_;                    // 管理socket
+    std::unique_ptr<Channel> channel_;                  // 需要使用Channel管理socket触发回调
     const InetAddress local_addr_;
     const InetAddress peer_addr_;
     ConnectionCallback connection_callback_;
@@ -126,8 +126,8 @@ private:
     HighWaterMarkCallback high_water_mark_callback_;
     CloseCallback close_callback_;
     size_t high_water_mark_;
-    Buffer input_buffer_;
-    Buffer output_buffer_;
+    Buffer input_buffer_;                               // 输入数据缓冲，负责接收数据
+    Buffer output_buffer_;                              // 输出数据缓冲，负责发送数据
     boost::any context_;
 };
 

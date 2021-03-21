@@ -136,6 +136,11 @@ public:
         return retrieve_as_string(readable_bytes());
     }
 
+    /**
+     * @brief 确保有足够len大小的空间可写入
+     * 如果没有足够空间则执行make_space
+     * @param len 
+     */
     void ensure_writable_bytes(size_t len) {
         if (writable_bytes() < len) {
             make_space(len);
@@ -294,9 +299,11 @@ private:
     }
 
     void make_space(size_t len) {
+        // 若buffer加上前缀部分的剩余空间都不够，则直接执行扩容，在原来写入的索引基础上直接增加len单位
         if (writable_bytes() + prependable_bytes() < len + k_cheap_prepend) {
             buffer_.resize(writer_index_ + len);
         } else {
+            // 若剩余空间足够，只是比较分散，那就重新安排一下前缀，将前缀空间腾出来
             assert(k_cheap_prepend < reader_index_);
             size_t readable = readable_bytes();
             std::copy(begin() + reader_index_,

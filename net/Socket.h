@@ -27,19 +27,19 @@ public:
     int fd() const {
         return sockfd_;
     }
-    bool get_tcp_info(struct tcp_info *) const;
     bool get_tcp_info_string(char *buf, int len) const;
 
     void bind_addr(const InetAddress &local_addr);
     void listen();
     int accept(InetAddress *peer_addr);
-
     void shutdown_write();
+    
     void set_tcp_no_delay(bool on);
     void set_reuse_addr(bool on);
     void set_keep_alive(bool on);
 private:
     const int sockfd_;
+    bool get_tcp_info(struct tcp_info *) const;
 };
 
 namespace sockets {

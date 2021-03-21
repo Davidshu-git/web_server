@@ -27,8 +27,8 @@ void default_connection_callback(const TcpConnectionPtr &conn) {
 }
 
 void default_message_callback(const TcpConnectionPtr &,
-                                               Buffer *buf,
-                                               Timestamp) {
+                              Buffer *buf,
+                              Timestamp) {
     buf->retrieve_all();
 }
 
@@ -161,9 +161,8 @@ void TcpConnection::handle_close() {
     assert(state_ == kConnected || state_ == kDisconnecting);
     set_state(kDisconnected);
     channel_->disable_all();
-    TcpConnectionPtr guard_this(shared_from_this());
-    connection_callback_(guard_this);
-    close_callback_(guard_this);
+    // 使用shared_ptr来管理this指针，避免this指向的对象生命周期提前结束
+    close_callback_(shared_from_this());
 }
 
 void TcpConnection::handle_error(){
@@ -175,15 +174,18 @@ void TcpConnection::handle_error(){
 void TcpConnection::send_in_loop(const std::string &message){
     loop_->assert_in_loop_thread();
     ssize_t n = 0;
+    size_t remain = message.size();
+    if (state_ == kDisconnected) {
+        LOG_WARN << "disconnected, give up writing";
+        return;
+    }
+    // 若channel没有关注写事件，输出缓冲区没有数据可读，尝试直接对该文件描述符进行写操作
     if (!channel_->is_writing() && output_buffer_.readable_bytes() == 0) {
         n = ::write(channel_->fd(), message.data(), message.size());
         if (n >= 0) {
-            if (static_cast<size_t>(n) < message.size()) {
-                LOG_DEBUG << "I am going to write more data";
-            } else {
-                if (write_complete_callback_) {
-                    loop_->queue_in_loop(std::bind(write_complete_callback_, shared_from_this()));
-                }
+            remain = message.size() - n;
+            if (remain == 0 && write_complete_callback_) {
+                loop_->queue_in_loop(std::bind(write_complete_callback_, shared_from_this()));
             }
         } else {
             n = 0;
@@ -191,15 +193,24 @@ void TcpConnection::send_in_loop(const std::string &message){
                 LOG_SYSERR << "TcpConnection::send_in_loop";
             }
         }
+    }
 
-        assert(n >= 0);
-        if (static_cast<size_t>(n) < message.size()) {
-            output_buffer_.append(message.data() + n, message.size() - n);
-            if (!channel_->is_writing()) {
-                channel_->enable_writing();
-            }
+    assert(remain <= message.size());
+    // 若一次性没有写完，则将剩余数据放到输出buffer中，然后让channel监听写事件，负责将剩余数据写出
+    // 在handle_write中完成剩余工作
+    if (remain > 0) {
+        size_t old_len = output_buffer_.readable_bytes();
+        if (old_len + remain >= high_water_mark_
+            && old_len < high_water_mark_
+            && high_water_mark_callback_) {
+            loop_->queue_in_loop(std::bind(high_water_mark_callback_, shared_from_this(), old_len + remain));
+        }
+        output_buffer_.append(message.data() + n, remain);
+        if (!channel_->is_writing()) {
+            channel_->enable_writing();
         }
     }
+    
 }
 
 void TcpConnection::shutdown_in_loop() {

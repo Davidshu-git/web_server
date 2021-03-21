@@ -60,6 +60,15 @@
         "internet": "cpp",
         "io_context": "cpp",
         "socket": "cpp",
-        "ratio": "cpp"
+        "ratio": "cpp",
+        "chrono": "cpp",
+        "condition_variable": "cpp",
+        "forward_list": "cpp",
+        "executor": "cpp",
+        "netfwd": "cpp",
+        "timer": "cpp",
+        "future": "cpp",
+        "mutex": "cpp",
+        "thread": "cpp"
     }
 }
