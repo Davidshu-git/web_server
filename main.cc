@@ -50,13 +50,13 @@ void on_request(const HttpRequest &req, HttpResponse *resp) {
 int main(int argc, char *argv[]) {
     int num_threads = 0;
     if (argc > 1) {
-        Logger::set_log_level(Logger::ERROR);
+        Logger::set_log_level(Logger::TRACE);
         num_threads = atoi(argv[1]);
     }
     EventLoop loop;
     HttpServer server(&loop, InetAddress(8000), "http_server");
-    server.set_http_callback(on_request);
-    server.set_thread_num(num_threads);
-    server.start();
-    loop.loop();
+    // server.set_http_callback(on_request);
+    // server.set_thread_num(num_threads);
+    // server.start();
+    // loop.loop();
 }

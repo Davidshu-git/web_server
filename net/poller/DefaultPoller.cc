@@ -14,13 +14,14 @@ namespace web_server {
 
 namespace net {
 
+// 默认使用epoll
 Poller *Poller::new_default_poller(EventLoop *loop) {
     // if(::getenv("WEB_SERVER_USE_POLL")) {
-    if(false) {
-        return new PollPoller(loop);
-    } else {
-        return new EPollPoller(loop);
-    }
+    //     return new PollPoller(loop);
+    // } else {
+    //     return new EPollPoller(loop);
+    // }
+    return new EPollPoller(loop);
 }
 
 } // namespace net

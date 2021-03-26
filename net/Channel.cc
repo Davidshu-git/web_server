@@ -76,7 +76,7 @@ void Channel::handle_event(Timestamp receive_time) {
 
 /**
  * @brief 实际执行io事件回调函数分发的函数
- * 
+ * 根据revent的值可以获知目前触发了什么事件，那么一次对这些事件进行处理即可
  * @param receive_time 
  */
 void Channel::handle_event_with_guard(Timestamp receive_time) {

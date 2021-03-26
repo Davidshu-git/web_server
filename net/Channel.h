@@ -68,10 +68,12 @@ public:
         revents_ = revents;
     }
 
+    // 判断是不是对所有事件都不感兴趣了
     bool is_nonevent() const {
         return events_ == k_nonevent;
     }
 
+    // 使能读事件，表示该channel管理的fd要对读事件感兴趣
     void enable_reading() {
         events_ |= k_readevent;
         update();
@@ -97,6 +99,7 @@ public:
         update();
     }
 
+    // 表示是不是正在跟踪读事件
     bool is_reading() const {
         return events_ & k_readevent;
     }
@@ -105,6 +108,7 @@ public:
         return events_ & k_writeevent;
     }
 
+    // 辅助记录
     int index() {
         return index_;
     }
@@ -136,17 +140,17 @@ private:
     static const int k_readevent;
     static const int k_writeevent;
     
-    EventLoop *loop_;
-    const int fd_;
+    EventLoop *loop_;                   // 指向对应的loop对象
+    const int fd_;                      // 其管理的fd
     int events_;                        // 用户关心的事件
-    int revents_;                       // 目前正在活动的事件
+    int revents_;                       // 目前触发了对事件
     int index_;
     bool log_hup_;
 
     std::weak_ptr<void> tie_;
     bool tied_;
     bool event_handling_;
-    bool added_to_loop_;
+    bool added_to_loop_;                // 表示是否添加到loop对象中
 
     static std::string events_to_string(int fd, int ev);
     void update();

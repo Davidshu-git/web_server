@@ -25,9 +25,7 @@ Acceptor::Acceptor(EventLoop *loop, const InetAddress &listen_addr, bool reuse_p
     : loop_(loop),
       accept_socket_(sockets::create_nonblocking()),
       accept_channel_(loop, accept_socket_.fd()),
-      listening_(false),
-      idle_fd_(::open("/dev/null", O_RDONLY | O_CLOEXEC)) {
-    assert(idle_fd_ >= 0);
+      listening_(false) {
     accept_socket_.set_reuse_addr(true);
     //set_reuseport;
     accept_socket_.bind_addr(listen_addr);
@@ -37,7 +35,6 @@ Acceptor::Acceptor(EventLoop *loop, const InetAddress &listen_addr, bool reuse_p
 Acceptor::~Acceptor() {
     accept_channel_.disable_all();
     accept_channel_.remove();
-    ::close(idle_fd_);
 }
 
 /**
@@ -67,12 +64,6 @@ void Acceptor:: handle_read() {
         }
     } else {
         LOG_SYSERR << "in Acceptor::handle_read";
-        if (errno == EMFILE) {
-            ::close(idle_fd_);
-            idle_fd_ = ::accept(accept_socket_.fd(), NULL, NULL);
-            ::close(idle_fd_);
-            idle_fd_ = ::open("/dev/null", O_RDONLY | O_CLOEXEC);
-        }
     }
 }
 

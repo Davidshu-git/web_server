@@ -87,8 +87,10 @@ TimerQueue::TimerQueue(EventLoop *loop)
       timerfd_channel_(loop, timerfd_),
       timers_(),
       calling_expired_timers_(false) {
+    LOG_TRACE << "begin create timequeue timerfd";
     timerfd_channel_.set_read_callback(std::bind(&TimerQueue::handle_read, this));
     timerfd_channel_.enable_reading();
+    LOG_TRACE << "finish timerfd create";
 }
 
 TimerQueue::~TimerQueue() {

@@ -63,9 +63,7 @@ public:
      * @param num_threads 
      */
     void set_thread_num(int num_threads);
-    void set_thread_init_callback(const ThreadInitCallback &cb) {
-        thread_init_callback_ = cb;
-    }
+    
 
     std::shared_ptr<EventLoopThreadPool> thread_pool() {
         return thread_pool_;
@@ -83,6 +81,10 @@ public:
 
     void set_write_complete_callback(const WriteCompleteCallback &cb) {
         write_complete_callback_ = cb;
+    }
+    
+    void set_thread_init_callback(const ThreadInitCallback &cb) {
+        thread_init_callback_ = cb;
     }
     
 private:

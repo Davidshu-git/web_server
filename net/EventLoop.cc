@@ -91,8 +91,10 @@ EventLoop::EventLoop()
     } else {
         t_loop_in_this_thread = this;
     }
+    LOG_TRACE << "begin wakeupfd update";
     wakeup_channel_->set_read_callback(std::bind(&EventLoop::handle_read, this));
     wakeup_channel_->enable_reading();
+    LOG_TRACE << "finish wakeupfd update";
 }
 
 EventLoop::~EventLoop() {
@@ -218,7 +220,7 @@ void EventLoop::abort_not_in_loop_thread() {
     LOG_FATAL << "EventLoop::abortNotInLoopThread - EventLoop " << this
               << " was created in threadId_ = " << thread_ID_
               << ", current thread id = " <<  current_thread::tid();
-    printf("not int loop error!\n");
+    printf("not in loop error!\n");
 }
 
 void EventLoop::wakeup() {
@@ -231,7 +233,7 @@ void EventLoop::wakeup() {
 
 /**
  * @brief 处理掉wakup操作中为了唤醒IO线程发送的数据，该数据触发了读事件
- * 
+ * 因为是LT模式，不处理掉该数据则会一直触发
  */
 void EventLoop::handle_read() {
     uint64_t one = 1;

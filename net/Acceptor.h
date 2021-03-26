@@ -47,7 +47,6 @@ private:
     Channel accept_channel_;
     NewConnectionCallback new_connection_callback_;
     bool listening_;
-    int idle_fd_;
 
     void handle_read();
 };
