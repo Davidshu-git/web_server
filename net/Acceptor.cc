@@ -27,7 +27,6 @@ Acceptor::Acceptor(EventLoop *loop, const InetAddress &listen_addr, bool reuse_p
       accept_channel_(loop, accept_socket_.fd()),
       listening_(false) {
     accept_socket_.set_reuse_addr(true);
-    //set_reuseport;
     accept_socket_.bind_addr(listen_addr);
     accept_channel_.set_read_callback(std::bind(&Acceptor::handle_read, this));
 }
@@ -46,6 +45,7 @@ void Acceptor::listen() {
     listening_ = true;
     accept_socket_.listen();
     accept_channel_.enable_reading();
+    LOG_TRACE << "acceptor channel fd set";
 }
 
 /**

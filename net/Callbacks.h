@@ -40,13 +40,9 @@ using ConnectionCallback = std::function<void(const TcpConnectionPtr &)>;
 using CloseCallback = std::function<void(const TcpConnectionPtr &)>;
 using WriteCompleteCallback = std::function<void(const TcpConnectionPtr &)>;
 using HighWaterMarkCallback = std::function<void(const TcpConnectionPtr &, size_t)>;
-using MessageCallback = std::function<void(const TcpConnectionPtr &,
-                                           Buffer*,
-                                           Timestamp)>;
+using MessageCallback = std::function<void(const TcpConnectionPtr &, Buffer*, Timestamp)>;
 void default_connection_callback(const TcpConnectionPtr &conn);
-void default_message_callback(const TcpConnectionPtr &conn,
-                              Buffer *buffer,
-                              Timestamp receive_time);
+void default_message_callback(const TcpConnectionPtr &conn, Buffer *buffer, Timestamp receive_time);
 } // namespace net
 
 } // namespace web_server

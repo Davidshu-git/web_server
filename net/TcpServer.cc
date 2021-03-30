@@ -64,8 +64,10 @@ void TcpServer::start() {
     }
 }
 
+// 有新连接到来后的处理方式
 void TcpServer::new_connection(int sockfd, const InetAddress &peer_addr) {
     loop_->assert_in_loop_thread();
+    // 从线程池中取一个io线程
     EventLoop *IO_loop = thread_pool_->get_next_loop();
     char buf[64];
     snprintf(buf, sizeof buf, "-%s#%d", IP_port_.c_str(), next_conn_ID_);
@@ -77,12 +79,14 @@ void TcpServer::new_connection(int sockfd, const InetAddress &peer_addr) {
              << "] from " << peer_addr.to_IP_port();
 
     InetAddress local_addr(InetAddress::get_local_addr(sockfd));
+    // 根据已有的信息创建一个tcpconnection对象，该对象由线程池中的IO线程进行管理
     TcpConnectionPtr conn(new TcpConnection(IO_loop, conn_name, sockfd, local_addr, peer_addr));
     connections_[conn_name] = conn;
     conn->set_connection_callback(connection_callback_);
     conn->set_message_callback(message_callback_);
     conn->set_write_complete_callback(write_complete_callback_);
     conn->set_close_callback(std::bind(&TcpServer::remove_connection, this, _1));
+    // 将连接建立后的任务交给线程池中的IO线程去完成
     IO_loop->run_in_loop(std::bind(&TcpConnection::connection_established, conn));
 }
 

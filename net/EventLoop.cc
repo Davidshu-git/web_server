@@ -91,10 +91,8 @@ EventLoop::EventLoop()
     } else {
         t_loop_in_this_thread = this;
     }
-    LOG_TRACE << "begin wakeupfd update";
     wakeup_channel_->set_read_callback(std::bind(&EventLoop::handle_read, this));
     wakeup_channel_->enable_reading();
-    LOG_TRACE << "finish wakeupfd update";
 }
 
 EventLoop::~EventLoop() {

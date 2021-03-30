@@ -61,7 +61,7 @@ bool Socket::get_tcp_info_string(char *buf, int len) const {
 
 void Socket::bind_addr(const InetAddress &local_addr) {
     sockaddr_in addr = local_addr.get_sock_addr();
-    int ret = ::bind(sockfd_, reinterpret_cast<sockaddr*>(&addr), sizeof(addr));
+    int ret = ::bind(sockfd_, (const sockaddr*)&addr, sizeof(addr));
     if (ret < 0) {
         LOG_SYSFATAL << "Socket::bind_addr";
     }
@@ -78,7 +78,7 @@ int Socket::accept(InetAddress *peeraddr) {
     struct sockaddr_in addr;
     memset(&addr, 0, sizeof(addr));
     socklen_t addr_len = static_cast<socklen_t>(sizeof(addr));
-    int connfd = ::accept4(sockfd_, reinterpret_cast<sockaddr*>(&addr),
+    int connfd = ::accept4(sockfd_, (sockaddr *)&addr,
                            &addr_len, SOCK_NONBLOCK | SOCK_CLOEXEC);
     if (connfd >= 0) {
         peeraddr->set_sock_addr(addr);

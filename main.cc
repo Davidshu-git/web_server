@@ -55,8 +55,8 @@ int main(int argc, char *argv[]) {
     }
     EventLoop loop;
     HttpServer server(&loop, InetAddress(8000), "http_server");
-    // server.set_http_callback(on_request);
-    // server.set_thread_num(num_threads);
-    // server.start();
-    // loop.loop();
+    server.set_http_callback(on_request);
+    server.set_thread_num(num_threads);
+    server.start();
+    loop.loop();
 }
