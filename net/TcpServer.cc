@@ -42,7 +42,7 @@ TcpServer::TcpServer(EventLoop *loop, const InetAddress &listen_addr,
 
 TcpServer::~TcpServer() {
     loop_->assert_in_loop_thread();
-    LOG_TRACE << "TcpServer::~TcpServer [" << name_ << "] destructing";
+    // LOG_TRACE << "TcpServer::~TcpServer [" << name_ << "] destructing";
 
     for (auto &item : connections_) {
         TcpConnectionPtr conn(item.second);
@@ -74,9 +74,7 @@ void TcpServer::new_connection(int sockfd, const InetAddress &peer_addr) {
     ++next_conn_ID_;
     std::string conn_name = name_ + buf;
 
-    LOG_INFO << "TcpServer::new_connection [" << name_
-             << "] - new connection [" << conn_name
-             << "] from " << peer_addr.to_IP_port();
+    // LOG_INFO << "TcpServer::new_connection [" << name_ << "] - new connection [" << conn_name << "] from " << peer_addr.to_IP_port();
 
     InetAddress local_addr(InetAddress::get_local_addr(sockfd));
     // 根据已有的信息创建一个tcpconnection对象，该对象由线程池中的IO线程进行管理
@@ -96,8 +94,7 @@ void TcpServer::remove_connection(const TcpConnectionPtr &conn) {
 
 void TcpServer::remove_connection_in_loop(const TcpConnectionPtr &conn) {
     loop_->assert_in_loop_thread();
-    LOG_INFO << "TcpServer::removeConnectionInLoop [" << name_
-             << "] - connection " << conn->name();
+    // LOG_INFO << "TcpServer::removeConnectionInLoop [" << name_ << "] - connection " << conn->name();
     size_t n = connections_.erase(conn->name());
     assert(n == 1);
     EventLoop *IO_loop = conn->get_loop();

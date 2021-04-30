@@ -28,7 +28,7 @@ int create_timerfd() {
     int timerfd = ::timerfd_create(CLOCK_MONOTONIC,
                                    TFD_NONBLOCK | TFD_CLOEXEC);
     if (timerfd < 0) {
-        LOG_SYSFATAL << "Failed in timerfd_create";
+        // LOG_SYSFATAL << "Failed in timerfd_create";
     }
     return timerfd;
 }
@@ -59,7 +59,7 @@ void reset_timerfd(int timerfd, Timestamp expiration) {
     new_value.it_value = how_much_time_from_now(expiration);
     int ret = ::timerfd_settime(timerfd, 0, &new_value, &old_value);
     if (ret) {
-        LOG_SYSERR << "timerfd_settime()";
+        // LOG_SYSERR << "timerfd_settime()";
     }
 }
 
@@ -73,9 +73,9 @@ void reset_timerfd(int timerfd, Timestamp expiration) {
 void read_timerfd(int timerfd, Timestamp now) {
     uint64_t how_many;
     ssize_t n = ::read(timerfd, &how_many, sizeof how_many);
-    LOG_TRACE << "TimerQueue::handle_read() " << how_many << " at " << now.to_string();
+    // LOG_TRACE << "TimerQueue::handle_read() " << how_many << " at " << now.to_string();
     if (n != sizeof(how_many)) {
-        LOG_ERROR << "TimerQueue::handle_read() reads " << n << " bytes instead of 8";
+        // LOG_ERROR << "TimerQueue::handle_read() reads " << n << " bytes instead of 8";
     }
 }
 

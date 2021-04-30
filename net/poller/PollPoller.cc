@@ -36,14 +36,14 @@ Timestamp PollPoller::poll(int timeout_ms, ChannelLists *active_channels) {
     int saved_errno = errno;
     Timestamp now(Timestamp::now());
     if(num_events > 0) {
-        LOG_TRACE << num_events << " events happened";
+        // LOG_TRACE << num_events << " events happened";
         fill_active_channels(num_events, active_channels);
     } else if (num_events == 0) {
-        LOG_TRACE << " nothing happened";
+        // LOG_TRACE << " nothing happened";
     } else {
         if (saved_errno != EINTR) {
             errno = saved_errno;
-            LOG_SYSERR << "PollPoller::poll()";
+            // LOG_SYSERR << "PollPoller::poll()";
         }
     }
     return now;
@@ -65,7 +65,7 @@ void PollPoller::fill_active_channels(int num_events, ChannelLists *active_chann
 
 void PollPoller::update_channel(Channel *channel) {
     Poller::assert_in_loop_thread();
-    LOG_TRACE << "fd = " << channel->fd() << " events = " << channel->events();
+    // LOG_TRACE << "fd = " << channel->fd() << " events = " << channel->events();
     // 若该channel是新的，需要进行添加到channellist和pollfds_
     // 若是已经添加到channellist中的channel，可能不在关注列表pollfds_中，也可能在关注列表
     // 对应处理手段是，不管在不在pollfds_中，都对其进行事件更新，将channel中的信息补充到pollfd中
@@ -103,7 +103,7 @@ void PollPoller::update_channel(Channel *channel) {
  */
 void PollPoller::remove_channel(Channel *channel) {
     Poller::assert_in_loop_thread();
-    LOG_TRACE << "fd = " << channel->fd();
+    // LOG_TRACE << "fd = " << channel->fd();
     assert(channels_.find(channel->fd()) != channels_.end());
     assert(channels_[channel->fd()] == channel);
     assert(channel->is_nonevent());

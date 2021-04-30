@@ -38,13 +38,11 @@ TcpClient::TcpClient(EventLoop *loop, const InetAddress &server_addr,
       connect_(true),
       next_conn_ID_(1) {
     connector_->set_new_connection_callback(std::bind(&TcpClient::new_connection, this, _1));
-    LOG_INFO << "TcpClient::TcpClient[" << name_
-             << "] - connector " << get_pointer(connector_);
+    // LOG_INFO << "TcpClient::TcpClient[" << name_ << "] - connector " << get_pointer(connector_);
 }
 
 TcpClient::~TcpClient() {
-    LOG_INFO << "TcpClient::~TcpClient[" << name_
-             << "] - connector " << get_pointer(connector_);
+    // LOG_INFO << "TcpClient::~TcpClient[" << name_ << "] - connector " << get_pointer(connector_);
     TcpConnectionPtr conn;
     {
         MutexLockGuard lock(mutex_);
@@ -61,8 +59,7 @@ TcpClient::~TcpClient() {
 }
 
 void TcpClient::connect() {
-    LOG_INFO << "TcpClient::connect[" << name_ << "] - connecting to "
-             << connector_->server_address().to_IP_port();
+    // LOG_INFO << "TcpClient::connect[" << name_ << "] - connecting to " << connector_->server_address().to_IP_port();
     connect_ = true;
     connector_->start();
 }
@@ -115,8 +112,7 @@ void TcpClient::remove_connection(const TcpConnectionPtr &conn) {
 
     loop_->queue_in_loop(std::bind(&TcpConnection::connection_destroyed, conn));
     if (retry_ && connect_) {
-        LOG_INFO << "TcpClient::connect[" << name_ << "] - Reconnecting to "
-                 << connector_->server_address().to_IP_port();
+        // LOG_INFO << "TcpClient::connect[" << name_ << "] - Reconnecting to " << connector_->server_address().to_IP_port();
         connector_->restart();
     }
 }

@@ -25,7 +25,7 @@ namespace net {
 
 Socket::~Socket() {
     if (::close(sockfd_) < 0) {
-        LOG_SYSERR << "Socket::~Socket()";
+        // LOG_SYSERR << "Socket::~Socket()";
     }
 }
 
@@ -63,14 +63,14 @@ void Socket::bind_addr(const InetAddress &local_addr) {
     sockaddr_in addr = local_addr.get_sock_addr();
     int ret = ::bind(sockfd_, (const sockaddr*)&addr, sizeof(addr));
     if (ret < 0) {
-        LOG_SYSFATAL << "Socket::bind_addr";
+        // LOG_SYSFATAL << "Socket::bind_addr";
     }
 }
 
 void Socket::listen() {
     int ret = ::listen(sockfd_, SOMAXCONN);
     if (ret < 0) {
-        LOG_SYSFATAL << "Socket::listen";
+        // LOG_SYSFATAL << "Socket::listen";
     }
 }
 
@@ -85,7 +85,7 @@ int Socket::accept(InetAddress *peeraddr) {
         return connfd;
     } else {
         int saved_errno = errno;
-        LOG_SYSERR << "Socket::accept";
+        // LOG_SYSERR << "Socket::accept";
         switch (saved_errno) {
             case EAGAIN:
             case ECONNABORTED:
@@ -103,10 +103,10 @@ int Socket::accept(InetAddress *peeraddr) {
             case ENOMEM:
             case ENOTSOCK:
             case EOPNOTSUPP:
-                LOG_FATAL << "unexpected error of ::accept " << saved_errno;
+                // LOG_FATAL << "unexpected error of ::accept " << saved_errno;
                 break;
             default:
-                LOG_FATAL << "unknown error of ::accept " << saved_errno;
+                // LOG_FATAL << "unknown error of ::accept " << saved_errno;
                 break;
         }
     }
@@ -115,7 +115,7 @@ int Socket::accept(InetAddress *peeraddr) {
 
 void Socket::shutdown_write() {
     if (shutdown(sockfd_, SHUT_WR) < 0) {
-        LOG_SYSERR << "Socket::shutdown_write";
+        // LOG_SYSERR << "Socket::shutdown_write";
     }
 }
 
@@ -159,7 +159,7 @@ bool is_self_connect(int sockfd) {
 int create_nonblocking() {
     int sockfd = ::socket(AF_INET, SOCK_STREAM | SOCK_NONBLOCK | SOCK_CLOEXEC, IPPROTO_TCP);
     if (sockfd < 0) {
-        LOG_SYSFATAL << "sockets::create_nonblocking";
+        // LOG_SYSFATAL << "sockets::create_nonblocking";
     }
     return sockfd;
 }

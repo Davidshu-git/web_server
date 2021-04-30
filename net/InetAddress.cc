@@ -40,7 +40,7 @@ InetAddress::InetAddress(const std::string &IP, uint16_t port) {
     addr_.sin_family = AF_INET;
     addr_.sin_port = htobe16(port);
     if (::inet_pton(AF_INET, IP.c_str(), &addr_.sin_addr) <= 0) {
-        LOG_SYSERR << "InetAddress::InetAddress(const std::string &IP, uint16_t port)";
+        // LOG_SYSERR << "InetAddress::InetAddress(const std::string &IP, uint16_t port)";
     }
 }
 
@@ -73,7 +73,7 @@ sockaddr_in InetAddress::get_local_addr(int sockfd) {
     sockaddr_in local_addr;
     socklen_t addr_len = sizeof(local_addr);
     if (::getsockname(sockfd, reinterpret_cast<sockaddr *>(&local_addr), &addr_len) < 0) {
-        LOG_SYSERR << "InetAddress::get_local_addr";
+        // LOG_SYSERR << "InetAddress::get_local_addr";
     }
     return local_addr;
 }
@@ -88,7 +88,7 @@ sockaddr_in InetAddress::get_peer_addr(int sockfd) {
     sockaddr_in peer_addr;
     socklen_t addr_len = sizeof(peer_addr);
     if (::getpeername(sockfd, reinterpret_cast<sockaddr *>(&peer_addr), &addr_len) < 0) {
-        LOG_SYSERR << "InetAddress::get_peer_addr";
+        // LOG_SYSERR << "InetAddress::get_peer_addr";
     }
     return peer_addr;
 }

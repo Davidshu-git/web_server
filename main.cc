@@ -20,11 +20,12 @@ using namespace web_server::net;
 using namespace web_server::http;
 
 void on_request(const HttpRequest &req, HttpResponse *resp) {
-    std::cout << "Headers " << req.method_string() << " " << req.path() << std::endl;
-    const std::map<std::string, std::string> &headers = req.headers();
-    for (const auto &header : headers) {
-        std::cout << header.first << ": " << header.second << std::endl;
-    }
+    // 为了性能评测，先不进行状态回显
+    // std::cout << "Headers " << req.method_string() << " " << req.path() << std::endl;
+    // const std::map<std::string, std::string> &headers = req.headers();
+    // for (const auto &header : headers) {
+    //     std::cout << header.first << ": " << header.second << std::endl;
+    // }
 
     if (req.path() == "/") {
         resp->set_status_code(HttpResponse::k_200_ok);
@@ -54,7 +55,7 @@ int main(int argc, char *argv[]) {
         num_threads = atoi(argv[1]);
     }
     EventLoop loop;
-    HttpServer server(&loop, InetAddress(8000), "http_server");
+    HttpServer server(&loop, InetAddress(8047), "http_server");
     server.set_http_callback(on_request);
     server.set_thread_num(num_threads);
     server.start();

@@ -21,9 +21,7 @@ namespace web_server {
 namespace net {
 
 void default_connection_callback(const TcpConnectionPtr &conn) {
-    LOG_TRACE << conn->local_addr().to_IP_port() << " -> "
-              << conn->peer_addr().to_IP_port() << " is "
-              << (conn->connected() ? "UP" : "DOWN");
+    // LOG_TRACE << conn->local_addr().to_IP_port() << " -> " << conn->peer_addr().to_IP_port() << " is " << (conn->connected() ? "UP" : "DOWN");
 }
 
 void default_message_callback(const TcpConnectionPtr &,
@@ -49,15 +47,12 @@ TcpConnection::TcpConnection(EventLoop *loop,
     channel_->set_write_callback(std::bind(&TcpConnection::handle_write, this));
     channel_->set_close_callback(std::bind(&TcpConnection::handle_close, this));
     channel_->set_error_callback(std::bind(&TcpConnection::handle_error, this));
-    LOG_DEBUG << "TcpConnection::ctor[" <<  name_ << "] at " << this
-              << " fd=" << sockfd;
+    // LOG_DEBUG << "TcpConnection::ctor[" <<  name_ << "] at " << this << " fd=" << sockfd;
     socket_->set_keep_alive(true);
 }
 
 TcpConnection::~TcpConnection() {
-    LOG_DEBUG << "TcpConnection::dtor[" <<  name_ << "] at " << this
-              << " fd=" << channel_->fd()
-              << " state=" << state_to_string();
+    // LOG_DEBUG << "TcpConnection::dtor[" <<  name_ << "] at " << this << " fd=" << channel_->fd() << " state=" << state_to_string();
     assert(state_ == kDisconnected);
 }
 
@@ -124,7 +119,7 @@ void TcpConnection::handle_read(Timestamp receive_time) {
         handle_close();
     } else {
         errno = saved_errno;
-        LOG_SYSERR << "TcpConnection::handle_read";
+        // LOG_SYSERR << "TcpConnection::handle_read";
         handle_error();
     }
 }
@@ -147,17 +142,16 @@ void TcpConnection::handle_write() {
                 }
             }
         } else {
-            LOG_SYSERR << "TcpConnection::handle_write";
+            // LOG_SYSERR << "TcpConnection::handle_write";
         }
     } else {
-        LOG_TRACE << "Connection fd = " << channel_->fd()
-                  << " is down, no more writing";
+        // LOG_TRACE << "Connection fd = " << channel_->fd() << " is down, no more writing";
     }
 }
 
 void TcpConnection::handle_close() {
     loop_->assert_in_loop_thread();
-    LOG_TRACE << "fd = " << channel_->fd() << " state = " << state_to_string();
+    // LOG_TRACE << "fd = " << channel_->fd() << " state = " << state_to_string();
     assert(state_ == kConnected || state_ == kDisconnecting);
     set_state(kDisconnected);
     channel_->disable_all();
@@ -167,8 +161,7 @@ void TcpConnection::handle_close() {
 
 void TcpConnection::handle_error(){
     int err = sockets::get_socket_error(channel_->fd());
-    LOG_ERROR << "TcpConnection::handle_error [" << name_
-                  << "] - SO_ERROR = " << err << " " << strerror_tl(err);
+    // LOG_ERROR << "TcpConnection::handle_error [" << name_ << "] - SO_ERROR = " << err << " " << strerror_tl(err);
 }
 
 void TcpConnection::send_in_loop(const std::string &message){
@@ -176,7 +169,7 @@ void TcpConnection::send_in_loop(const std::string &message){
     ssize_t n = 0;
     size_t remain = message.size();
     if (state_ == kDisconnected) {
-        LOG_WARN << "disconnected, give up writing";
+        // LOG_WARN << "disconnected, give up writing";
         return;
     }
     // 若channel没有关注写事件，输出缓冲区没有数据可读，尝试直接对该文件描述符进行写操作
@@ -190,7 +183,7 @@ void TcpConnection::send_in_loop(const std::string &message){
         } else {
             n = 0;
             if (errno != EWOULDBLOCK) {
-                LOG_SYSERR << "TcpConnection::send_in_loop";
+                // LOG_SYSERR << "TcpConnection::send_in_loop";
             }
         }
     }

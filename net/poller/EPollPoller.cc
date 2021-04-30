@@ -43,7 +43,7 @@ EPollPoller::EPollPoller(EventLoop *loop)
       epollfd_(::epoll_create1(EPOLL_CLOEXEC)),
       events_(k_init_event_list_size) {
     if (epollfd_ < 0) {
-        LOG_SYSFATAL << "EPollPoller::EPollPoller";
+        // LOG_SYSFATAL << "EPollPoller::EPollPoller";
     }
 }
 
@@ -52,24 +52,24 @@ EPollPoller::~EPollPoller() {
 }
 
 Timestamp EPollPoller::poll(int timeout_ms, ChannelLists *active_channels) {
-    LOG_TRACE << "fd total count " << channels_.size();
+    // LOG_TRACE << "fd total count " << channels_.size();
     int num_events = ::epoll_wait(epollfd_, events_.data(), static_cast<int>(events_.size()), timeout_ms);
     int saved_errno = errno;
     Timestamp now(Timestamp::now());
     if (num_events > 0) {
-        LOG_TRACE << num_events << " events happened";
+        // LOG_TRACE << num_events << " events happened";
         fill_active_channels(num_events, active_channels);
         // 扩充events数组大小
         if (num_events == static_cast<int>(events_.size())) {
             events_.resize(events_.size() * 2);
         }
     } else if (num_events == 0) {
-        LOG_TRACE << "nothing happened";
+        // LOG_TRACE << "nothing happened";
     } else {
         // 被系统中断了，忽略这种类型的错误
         if (saved_errno != EINTR) {
             errno = saved_errno;
-            LOG_SYSERR << "EPollPoller::poll()";
+            // LOG_SYSERR << "EPollPoller::poll()";
         }
     }
     return now;
@@ -102,9 +102,7 @@ void EPollPoller::fill_active_channels(int num_events, ChannelLists *active_chan
 void EPollPoller::update_channel(Channel *channel) {
     Poller::assert_in_loop_thread();
     const int index = channel->index();
-    LOG_TRACE << "fd = " << channel->fd() 
-              << " events = " << channel->events() 
-              << " index = " << index;
+    // LOG_TRACE << "fd = " << channel->fd() << " events = " << channel->events() << " index = " << index;
     if (index == k_new || index == k_deleted) {
         int fd = channel->fd();
         // 若为新的channel，则channel map中是找不到这个channel的fd的
@@ -149,7 +147,7 @@ void EPollPoller::update_channel(Channel *channel) {
 void EPollPoller::remove_channel(Channel *channel) {
     Poller::assert_in_loop_thread();
     int fd = channel->fd();
-    LOG_TRACE << "fd = " << fd;
+    // LOG_TRACE << "fd = " << fd;
     // 满足以下断言的才能进行channel删除
     assert(channels_.find(fd) != channels_.end());
     assert(channels_[fd] == channel);
@@ -175,14 +173,13 @@ void EPollPoller::update(int operation, Channel *channel) {
     // events数组中的data部分
     event.data.ptr = channel;
     int fd = channel->fd();
-    LOG_TRACE << "epoll_ctl op = " << operation_to_string(operation)
-              << " fd = " << fd << " event = { " << channel->events_to_string() << " }";
+    // LOG_TRACE << "epoll_ctl op = " << operation_to_string(operation) << " fd = " << fd << " event = { " << channel->events_to_string() << " }";
     // 根据指定的operation，在epoll树上的对应fd上增、删、改event
     if (::epoll_ctl(epollfd_, operation, fd, &event) < 0) {
         if (operation == EPOLL_CTL_DEL) {
-            LOG_SYSERR << "epoll_ctl op =" << operation_to_string(operation) << " fd =" << fd;
+            // LOG_SYSERR << "epoll_ctl op =" << operation_to_string(operation) << " fd =" << fd;
         } else {
-            LOG_SYSFATAL << "epoll_ctl op =" << operation_to_string(operation) << " fd =" << fd;
+            // LOG_SYSFATAL << "epoll_ctl op =" << operation_to_string(operation) << " fd =" << fd;
         }
     }
 }

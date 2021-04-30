@@ -19,17 +19,17 @@ void print() {
 }
 
 void printString(const std::string& str) {
-  LOG_INFO << str;
+  // LOG_INFO << str;
   usleep(100*1000);
 }
 
 void test(int maxSize) {
-    LOG_WARN << "Test ThreadPool with max queue size = " << maxSize;
+    // LOG_WARN << "Test ThreadPool with max queue size = " << maxSize;
     web_server::ThreadPool pool("MainThreadPool");
     pool.set_max_queue_size(maxSize);
     pool.start(5);
 
-    LOG_WARN << "Adding";
+    // LOG_WARN << "Adding";
     pool.run(print);
     pool.run(print);
     for (int i = 0; i < 100; ++i)
@@ -38,7 +38,7 @@ void test(int maxSize) {
         snprintf(buf, sizeof buf, "task %d", i);
         pool.run(std::bind(printString, std::string(buf)));
     }
-    LOG_WARN << "Done";
+    // LOG_WARN << "Done";
 
     web_server::CountDownLatch latch(1);
     pool.run(std::bind(&web_server::CountDownLatch::count_down, &latch));

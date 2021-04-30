@@ -45,7 +45,7 @@ void Acceptor::listen() {
     listening_ = true;
     accept_socket_.listen();
     accept_channel_.enable_reading();
-    LOG_TRACE << "acceptor channel fd set";
+    // LOG_TRACE << "acceptor channel fd set";
 }
 
 /**
@@ -63,7 +63,7 @@ void Acceptor:: handle_read() {
             ::close(connd);
         }
     } else {
-        LOG_SYSERR << "in Acceptor::handle_read";
+        // LOG_SYSERR << "in Acceptor::handle_read";
     }
 }
 

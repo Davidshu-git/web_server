@@ -38,7 +38,7 @@ const int kPollTimeMs = 10000;
 int create_event_fd() {
     int event_fd = ::eventfd(0, EFD_NONBLOCK | EFD_CLOEXEC);
     if(event_fd < 0) {
-        LOG_SYSERR << "Failed in eventfd";
+        // LOG_SYSERR << "Failed in eventfd";
         abort();
     }
     return event_fd;
@@ -84,10 +84,9 @@ EventLoop::EventLoop()
       wakeup_fd_(create_event_fd()),
       wakeup_channel_(new Channel(this, wakeup_fd_)),
       current_active_channel_(NULL) {
-    LOG_DEBUG << "EventLoop created " << this << " in thread " << thread_ID_;
+    // LOG_DEBUG << "EventLoop created " << this << " in thread " << thread_ID_;
     if (t_loop_in_this_thread) {
-        LOG_FATAL << "Another EventLoop " << t_loop_in_this_thread 
-                  << " exists in this thread " << thread_ID_;
+        // LOG_FATAL << "Another EventLoop " << t_loop_in_this_thread << " exists in this thread " << thread_ID_;
     } else {
         t_loop_in_this_thread = this;
     }
@@ -96,8 +95,7 @@ EventLoop::EventLoop()
 }
 
 EventLoop::~EventLoop() {
-    LOG_DEBUG << "EventLoop " << this << " of thread " << thread_ID_
-              << " destructs in thread " << current_thread::tid();
+    // LOG_DEBUG << "EventLoop " << this << " of thread " << thread_ID_ << " destructs in thread " << current_thread::tid();
     wakeup_channel_->disable_all();
     wakeup_channel_->remove();
     ::close(wakeup_fd_);
@@ -112,7 +110,7 @@ void EventLoop::loop() {
     assert_in_loop_thread();
     looping_ = true;
     quit_ = false;
-    LOG_TRACE << "EventLoop " << this << " start looping";
+    // LOG_TRACE << "EventLoop " << this << " start looping";
 
     while (!quit_) {
         active_channels_.clear();
@@ -130,7 +128,7 @@ void EventLoop::loop() {
         event_handling_ = false;
         do_pending_functors();
     }
-    LOG_TRACE << "EventLoop " << this << " stop looping";
+    // LOG_TRACE << "EventLoop " << this << " stop looping";
     looping_ = false;
 }
 
@@ -215,9 +213,7 @@ bool EventLoop::has_channel(Channel *channel) {
 }
 
 void EventLoop::abort_not_in_loop_thread() {
-    LOG_FATAL << "EventLoop::abortNotInLoopThread - EventLoop " << this
-              << " was created in threadId_ = " << thread_ID_
-              << ", current thread id = " <<  current_thread::tid();
+    // LOG_FATAL << "EventLoop::abortNotInLoopThread - EventLoop " << this << " was created in threadId_ = " << thread_ID_ << ", current thread id = " <<  current_thread::tid();
     printf("not in loop error!\n");
 }
 
@@ -225,7 +221,7 @@ void EventLoop::wakeup() {
     uint64_t one = 1;
     ssize_t n = write(wakeup_fd_, &one, sizeof one);
     if (n != sizeof one) {
-        LOG_ERROR << "EventLoop::wakeup() writes " << n << " bytes instead of 8";
+        // LOG_ERROR << "EventLoop::wakeup() writes " << n << " bytes instead of 8";
     }
 }
 
@@ -237,7 +233,7 @@ void EventLoop::handle_read() {
     uint64_t one = 1;
     ssize_t n = read(wakeup_fd_, &one, sizeof one);
     if (n != sizeof one) {
-        LOG_ERROR << "EventLoop::handleRead() reads " << n << " bytes instead of 8";
+        // LOG_ERROR << "EventLoop::handleRead() reads " << n << " bytes instead of 8";
     }
 }
 
@@ -263,7 +259,7 @@ void EventLoop::do_pending_functors() {
 
 void EventLoop::print_active_channels() const {
     for (Channel *channel : active_channels_) {
-        LOG_TRACE << "{" << channel->revents_to_string() << "} ";
+        // LOG_TRACE << "{" << channel->revents_to_string() << "} ";
     }
 }
 
