@@ -143,14 +143,14 @@ private:
     EventLoop *loop_;                   // 指向对应的loop对象
     const int fd_;                      // 其管理的fd
     int events_;                        // 用户关心的事件
-    int revents_;                       // 目前触发了对事件
+    int revents_;                       // 目前触发事件
     int index_;
     bool log_hup_;
 
     std::weak_ptr<void> tie_;
     bool tied_;
     bool event_handling_;
-    bool added_to_loop_;                // 表示是否添加到loop对象中
+    bool added_to_loop_;                // 表示该channel是否添加到loop对象中
 
     static std::string events_to_string(int fd, int ev);
     void update();

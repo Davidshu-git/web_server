@@ -24,6 +24,8 @@ class InetAddress;
 
 /**
  * @brief 负责监听socketfd上的accept请求
+ * 类构成：指向loop对象的指针、要使用其功能的socket类对象
+ * channel对象、设置连接时的需要执行的回调函数
  * 
  */
 class Acceptor : private Noncopyable {

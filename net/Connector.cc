@@ -84,9 +84,7 @@ void Connector::connect() {
         // LOG_SYSFATAL << "Connector::connect";
     }
     sockaddr_in addr = server_addr_.get_sock_addr();
-    int ret = ::connect(sockfd,
-                        reinterpret_cast<sockaddr *>(&addr),
-                        static_cast<socklen_t>(sizeof(struct sockaddr_in6)));
+    int ret = ::connect(sockfd, (sockaddr *)&addr, (socklen_t)sizeof(sockaddr));
     int saved_errno = (ret == 0) ? 0 : errno;
     switch (saved_errno) {
     case 0:

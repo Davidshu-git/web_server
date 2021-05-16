@@ -21,6 +21,15 @@ namespace web_server {
 
 namespace net {
 
+/**
+ * @brief Construct a new Acceptor:: Acceptor object
+ * 构建一个非阻塞的socket、设置其reuseaddr、bind步骤等
+ * 通过得到的socket来创建一个channel对象
+ * 设置其回调函数，handle_read是需要该类的用户自己进行编写的函数
+ * @param loop 
+ * @param listen_addr 
+ * @param reuse_port 
+ */
 Acceptor::Acceptor(EventLoop *loop, const InetAddress &listen_addr, bool reuse_port)
     : loop_(loop),
       accept_socket_(sockets::create_nonblocking()),
@@ -38,7 +47,7 @@ Acceptor::~Acceptor() {
 
 /**
  * @brief 负责创建TCP服务端步骤
- * 在IO线程中执行
+ * 在IO线程中执行，设置socket为监听，用channel类设置其关注读事件
  */
 void Acceptor::listen() {
     loop_->assert_in_loop_thread();
@@ -50,7 +59,9 @@ void Acceptor::listen() {
 
 /**
  * @brief 当检测到sockfd上的读事件时需要执行的回调函数
- * 需要在IO线程中执行
+ * 需要在IO线程中执行，该类可由用户编写，但执行的行为其实都差不多
+ * 使用此处的已经够用了，若new_connection_callback存在则调用这个函数
+ * 若不存在，则相当于接收到了读就绪但什么都不做，此时关闭accept到的文件描述符
  */
 void Acceptor:: handle_read() {
     loop_->assert_in_loop_thread();

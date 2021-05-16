@@ -116,9 +116,9 @@ void EventLoop::loop() {
         active_channels_.clear();
         poll_return_time_ = poller_->poll(kPollTimeMs, &active_channels_);
         ++iteration_;
-        if (Logger::log_level() <= Logger::TRACE) {
-            print_active_channels();
-        }
+        // if (Logger::log_level() <= Logger::TRACE) {
+        //     print_active_channels();
+        // }
         event_handling_ = true;
         for (Channel *channel : active_channels_) {
             current_active_channel_ = channel;

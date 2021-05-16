@@ -62,6 +62,11 @@ void Channel::remove() {
     loop_->remove_channel(this);
 }
 
+/**
+ * @brief 使用weak_ptr去保证对象存在，对象存在才能进行事件处理
+ * 
+ * @param receive_time 
+ */
 void Channel::handle_event(Timestamp receive_time) {
     std::shared_ptr<void> guard;
     if (tied_) {

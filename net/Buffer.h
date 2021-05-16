@@ -1,5 +1,6 @@
 /**
- * @brief 
+ * @brief buffer底层使用vector<char>实现即可
+ * 记录已读位置索引和已写索引
  * Copyright (c) 2021, David Shu. All rights reserved.
  * 
  * Use of this source code is governed by a GPL license
@@ -291,11 +292,11 @@ private:
     static const char k_CRLF[];
 
     char *begin() {
-        return &*buffer_.begin();
+        return buffer_.data();
     }
 
     const char *begin() const{
-        return &*buffer_.begin();
+        return buffer_.data();
     }
 
     void make_space(size_t len) {

@@ -94,6 +94,7 @@ void TcpConnection::connection_established() {
     loop_->assert_in_loop_thread();
     assert(state_ == kConnecting);
     set_state(kConnected);
+    // 将连接的shared_ptr交给channel管理
     channel_->tie(shared_from_this());
     channel_->enable_reading();
     connection_callback_(shared_from_this());

@@ -72,7 +72,7 @@ std::string InetAddress::to_IP_port() const {
 sockaddr_in InetAddress::get_local_addr(int sockfd) {
     sockaddr_in local_addr;
     socklen_t addr_len = sizeof(local_addr);
-    if (::getsockname(sockfd, reinterpret_cast<sockaddr *>(&local_addr), &addr_len) < 0) {
+    if (::getsockname(sockfd, (sockaddr *)&local_addr, &addr_len) < 0) {
         // LOG_SYSERR << "InetAddress::get_local_addr";
     }
     return local_addr;
@@ -87,7 +87,7 @@ sockaddr_in InetAddress::get_local_addr(int sockfd) {
 sockaddr_in InetAddress::get_peer_addr(int sockfd) {
     sockaddr_in peer_addr;
     socklen_t addr_len = sizeof(peer_addr);
-    if (::getpeername(sockfd, reinterpret_cast<sockaddr *>(&peer_addr), &addr_len) < 0) {
+    if (::getpeername(sockfd, (sockaddr *)&peer_addr, &addr_len) < 0) {
         // LOG_SYSERR << "InetAddress::get_peer_addr";
     }
     return peer_addr;

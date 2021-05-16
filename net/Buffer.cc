@@ -25,7 +25,7 @@ const size_t Buffer::k_initial_size;
  * 默认epoll采用LT模式，只要socket的接收缓冲区有数据，那么会不停触发事件
  * 所以最好一次性将数据全读干净，避免多次调用read
  * @param fd 
- * @param saved_errno 
+ * @param saved_errno 传出参数
  * @return ssize_t 
  */
 ssize_t Buffer::read_fd(int fd, int *saved_errno) {
